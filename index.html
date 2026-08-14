@@ -235,6 +235,59 @@
     .topbar{padding:16px 18px;flex-wrap:wrap;}
     .wrap{padding:20px 14px 60px;}
   }
+
+  /* ---------- impressão: espelho em 2 vias (A4) ---------- */
+  .print-area{display:none;}
+  @page{ size:A4; margin:10mm; }
+  @media print{
+    body *{visibility:hidden;}
+    .print-area, .print-area *{visibility:visible;}
+    .print-area{
+      display:block;position:absolute;top:0;left:0;width:100%;margin:0;padding:0;
+    }
+    .via{
+      height:132mm;
+      box-sizing:border-box;
+      padding:0 2mm 4mm;
+      page-break-inside:avoid;
+      font-family:'Inter',system-ui,sans-serif;
+      color:#000;
+    }
+    .via-header{
+      display:flex;justify-content:space-between;align-items:baseline;
+      border-bottom:2px solid #000;padding-bottom:5px;margin-bottom:10px;
+    }
+    .via-header .via-tag{
+      font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+      border:1px solid #000;border-radius:3px;padding:2px 8px;
+    }
+    .via-header .via-empresa{font-family:'Source Serif 4',serif;font-weight:600;font-size:14px;}
+    .via h3{
+      font-family:'Source Serif 4',serif;font-size:17px;margin:0 0 2px;
+    }
+    .via .sub{font-size:11px;color:#333;margin-bottom:8px;}
+    .via .frase{font-family:'Source Serif 4',serif;font-style:italic;font-size:12.5px;margin:6px 0;}
+    .via-grid{
+      display:grid;grid-template-columns:1fr 1fr;gap:2px 18px;font-size:11.5px;margin-top:6px;
+    }
+    .via-grid .full{grid-column:1/-1;}
+    .via-grid b{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:#555;font-weight:600;}
+    .via-status{
+      display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;
+      border:1px solid #000;border-radius:3px;padding:2px 8px;margin-top:6px;
+    }
+    .via-obs{font-size:11px;margin-top:8px;}
+    .via-disclaimer{font-size:8px;color:#444;margin-top:10px;line-height:1.4;}
+    .via-assinatura{
+      margin-top:16px;display:flex;justify-content:space-between;gap:20px;font-size:10.5px;
+    }
+    .via-assinatura div{flex:1;border-top:1px solid #000;padding-top:4px;text-align:center;}
+    .corte{
+      display:flex;align-items:center;gap:10px;color:#777;font-size:9px;letter-spacing:.15em;
+      text-transform:uppercase;margin:3mm 0;
+    }
+    .corte::before, .corte::after{content:"";flex:1;border-top:1px dashed #777;}
+  }
 </style>
 </head>
 <body>
@@ -250,7 +303,6 @@
   <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
     <div class="sync-status" id="syncStatus"><span class="sync-dot" id="syncDot"></span><span id="syncText">—</span></div>
     <button class="btn btn-ghost" id="btnAtualizar">Atualizar agora</button>
-    <button class="btn btn-ghost" id="btnFornecedores">Terceirizados</button>
     <button class="btn btn-primary" id="btnNovo">+ Novo pedido</button>
   </div>
 </div>
@@ -305,12 +357,6 @@
       </select>
     </div>
     <div class="field">
-      <label for="fFornecedor">Terceirizado</label>
-      <select id="fFornecedor">
-        <option value="">Todos</option>
-      </select>
-    </div>
-    <div class="field">
       <label for="fDataDe">Data do pedido — de</label>
       <input type="date" id="fDataDe">
     </div>
@@ -335,6 +381,9 @@
   <div id="listaContainer"></div>
 
 </div>
+
+<!-- Área usada só na hora de imprimir (2 vias em 1 folha A4) -->
+<div id="printArea" class="print-area"></div>
 
 <!-- Modal: novo/editar pedido -->
 <div class="overlay" id="overlay">
@@ -414,11 +463,6 @@
             <option value="entregue">Entregue / instalada</option>
           </select>
         </div>
-        <div class="field">
-          <label for="fornecedor">Empresa terceirizada *</label>
-          <select id="fornecedor" required></select>
-          <span class="hint">Definida pela diretoria. Gerencie a lista em "Terceirizados".</span>
-        </div>
 
         <div class="field full">
           <label for="observacoes">Observações</label>
@@ -434,30 +478,6 @@
   </div>
 </div>
 
-<!-- Modal: fornecedores -->
-<div class="overlay" id="overlayForn">
-  <div class="modal" style="max-width:440px;">
-    <div class="modal-head">
-      <h2>Empresas terceirizadas</h2>
-      <button class="modal-close" id="modalFornClose">&times;</button>
-    </div>
-    <div class="modal-body" style="grid-template-columns:1fr;">
-      <div class="field full">
-        <label for="novoFornNome">Adicionar empresa</label>
-        <div style="display:flex;gap:8px;">
-          <input type="text" id="novoFornNome" placeholder="Nome da empresa terceirizada" style="flex:1;">
-          <button class="btn btn-secondary" id="btnAddForn" type="button">Adicionar</button>
-        </div>
-      </div>
-      <div id="listaFornecedores" class="field full"></div>
-      <p class="hint">A escolha da empresa terceirizada responsável pela confecção das placas é de responsabilidade exclusiva da diretoria. A lista é compartilhada com todos os colegas.</p>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-secondary" id="btnFecharForn" type="button">Fechar</button>
-    </div>
-  </div>
-</div>
-
 <script>
 (function(){
   "use strict";
@@ -467,7 +487,7 @@
    * (Extensões > Apps Script > Implantar > Nova implantação > App da Web).
    * A URL termina em /exec
    * ========================================================================= */
-  const API_URL = "https://script.google.com/macros/s/AKfycbzagPnOVOm6i5vZ6Q2AOdmUev7MvItJT6S0HkZ-12xyzWa02U5FJQxcRIQqyjqky--JYw/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbyZt5oPRDBRc-ckmNwZXUIQzGulkRkglnqWaJ5xwYVtILNoV6Osnbd5c80jpLcVu4MGgg/exec";
   const AUTO_REFRESH_MS = 20000; // atualiza automaticamente a cada 20s
 
   const DISCLAIMER = "O atendente, em hipótese nenhuma, será responsável pelo serviço de confecção da placa, o qual é executado por empresa terceirizada escolhida pela diretoria.";
@@ -482,7 +502,6 @@
   };
 
   let pedidos = [];
-  let fornecedores = [];
   let editandoId = null;
   let refreshTimer = null;
 
@@ -536,10 +555,8 @@
     try{
       const data = await apiGetDados();
       pedidos = data.pedidos || [];
-      fornecedores = data.fornecedores || [];
       esconderErro();
       setSyncStatus("ok", "Atualizado às " + new Date().toLocaleTimeString("pt-BR"));
-      renderFornecedorSelects();
       renderLista();
     }catch(err){
       setSyncStatus("error", "Falha ao sincronizar");
@@ -553,7 +570,29 @@
   }
 
   // ---------- utilidades de data ----------
-  function parseDate(str){ if(!str) return null; const [y,m,d] = String(str).split("-").map(Number); return new Date(y, m-1, d); }
+  function parseDate(str){
+    if(!str) return null;
+    let s = String(str).trim();
+    if(!s) return null;
+    let y, m, d;
+    if(s.includes("T")) s = s.split("T")[0]; // corta hora, se vier junto (ex: da planilha)
+    if(s.includes("-")){
+      const p = s.split("-").map(Number);
+      if(p.length !== 3) return null;
+      [y, m, d] = p;
+    } else if(s.includes("/")){
+      // formato dd/mm/aaaa, caso a planilha devolva nesse padrão
+      const p = s.split("/").map(Number);
+      if(p.length !== 3) return null;
+      [d, m, y] = p;
+    } else {
+      return null;
+    }
+    if(!y || !m || !d || isNaN(y) || isNaN(m) || isNaN(d)) return null;
+    const dt = new Date(y, m - 1, d);
+    if(isNaN(dt.getTime())) return null;
+    return dt;
+  }
   function fmtDate(str){ const d = parseDate(str); if(!d) return "—"; return d.toLocaleDateString("pt-BR"); }
   function fmtDateLong(str){
     const d = parseDate(str); if(!d) return "Sem data";
@@ -587,33 +626,6 @@
     `;
   }
 
-  // ---------- render: select de fornecedores ----------
-  function renderFornecedorSelects(){
-    const selForm = document.getElementById("fornecedor");
-    const selFiltro = document.getElementById("fFornecedor");
-    const valorAtualForm = selForm.value;
-    const valorAtualFiltro = selFiltro.value;
-    const optsForm = fornecedores.map(f => `<option value="${escapeHtml(f)}">${escapeHtml(f)}</option>`).join("");
-    selForm.innerHTML = optsForm || `<option value="">Nenhuma cadastrada</option>`;
-    selFiltro.innerHTML = `<option value="">Todos</option>` + optsForm;
-    if(fornecedores.includes(valorAtualForm)) selForm.value = valorAtualForm;
-    if(fornecedores.includes(valorAtualFiltro)) selFiltro.value = valorAtualFiltro;
-  }
-
-  function renderListaFornecedores(){
-    const el = document.getElementById("listaFornecedores");
-    if(fornecedores.length === 0){
-      el.innerHTML = `<p class="hint">Nenhuma empresa cadastrada ainda.</p>`;
-      return;
-    }
-    el.innerHTML = fornecedores.map((f,i) => `
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);">
-        <span style="font-size:14px;">${escapeHtml(f)}</span>
-        <button type="button" class="icon-btn" data-remove-forn="${i}">Remover</button>
-      </div>
-    `).join("");
-  }
-
   function escapeHtml(str){
     const div = document.createElement("div");
     div.textContent = str;
@@ -626,7 +638,6 @@
     const fStatus = document.getElementById("fStatus").value;
     const fFoto = document.getElementById("fFoto").value;
     const fFrase = document.getElementById("fFrase").value;
-    const fFornecedor = document.getElementById("fFornecedor").value;
     const fDataDe = document.getElementById("fDataDe").value;
     const fDataAte = document.getElementById("fDataAte").value;
     const ordenar = document.getElementById("fOrdenar").value;
@@ -639,7 +650,6 @@
       if(fStatus && statusEfetivo(p) !== fStatus) return false;
       if(fFoto && p.comFoto !== fFoto) return false;
       if(fFrase && p.comFrase !== fFrase) return false;
-      if(fFornecedor && p.fornecedor !== fFornecedor) return false;
       if(fDataDe && p.dataPedido < fDataDe) return false;
       if(fDataAte && p.dataPedido > fDataAte) return false;
       return true;
@@ -707,6 +717,9 @@
     container.querySelectorAll("[data-edit]").forEach(btn => {
       btn.addEventListener("click", () => abrirModal(btn.getAttribute("data-edit")));
     });
+    container.querySelectorAll("[data-print]").forEach(btn => {
+      btn.addEventListener("click", () => imprimirPedido(btn.getAttribute("data-print")));
+    });
     container.querySelectorAll("[data-del]").forEach(btn => {
       btn.addEventListener("click", () => excluirPedido(btn.getAttribute("data-del")));
     });
@@ -726,7 +739,7 @@
 
     const prazoTexto = se === "entregue"
       ? "Concluído"
-      : (restantes < 0 ? `${Math.abs(restantes)} dia(s) em atraso` : `${restantes} dia(s) restante(s)`);
+      : (restantes === null ? "Data do pedido inválida" : (restantes < 0 ? `${Math.abs(restantes)} dia(s) em atraso` : `${restantes} dia(s) restante(s)`));
 
     return `
     <div class="card">
@@ -741,7 +754,6 @@
         <div class="tags">
           <span class="tag">${p.comFoto === "sim" ? "Com foto" : "Sem foto"}</span>
           <span class="tag">${p.comFrase === "sim" ? "Com frase" : "Sem frase"}</span>
-          <span class="tag">${escapeHtml(p.fornecedor || "Sem terceirizado")}</span>
         </div>
         ${p.comFrase === "sim" && p.fraseTexto ? `<div class="frase-box">&ldquo;${escapeHtml(p.fraseTexto)}&rdquo;</div>` : ""}
         <div class="info-line"><span>Cliente</span><span>${escapeHtml(p.clienteNome)}</span></div>
@@ -759,6 +771,7 @@
       <div class="card-footer">
         <div class="actions">
           <button class="icon-btn" data-edit="${p.id}">Editar</button>
+          <button class="icon-btn" data-print="${p.id}">Imprimir</button>
           <button class="icon-btn" data-del="${p.id}">Excluir</button>
         </div>
       </div>
@@ -772,7 +785,6 @@
 
   function abrirModal(id){
     editandoId = id || null;
-    renderFornecedorSelects();
     document.getElementById("modalTitulo").textContent = id ? "Editar pedido" : "Novo pedido";
     document.getElementById("formError").textContent = "";
     form.reset();
@@ -793,7 +805,6 @@
         document.getElementById("dataPedido").value = p.dataPedido;
         document.getElementById("prazoDias").value = p.prazoDias;
         document.getElementById("status").value = p.status;
-        document.getElementById("fornecedor").value = p.fornecedor;
         document.getElementById("observacoes").value = p.observacoes || "";
       }
     } else {
@@ -838,7 +849,6 @@
       dataPedido: document.getElementById("dataPedido").value,
       prazoDias: prazo,
       status: document.getElementById("status").value,
-      fornecedor: document.getElementById("fornecedor").value,
       observacoes: document.getElementById("observacoes").value.trim()
     };
 
@@ -849,9 +859,7 @@
     try{
       const data = await apiPost({ action: "salvarPedido", pedido: dados });
       pedidos = data.pedidos || [];
-      fornecedores = data.fornecedores || [];
       fecharModal();
-      renderFornecedorSelects();
       renderLista();
       setSyncStatus("ok", "Atualizado às " + new Date().toLocaleTimeString("pt-BR"));
     }catch(err){
@@ -862,64 +870,63 @@
     }
   });
 
+  function viaHtml(p, rotulo){
+    const se = statusEfetivo(p);
+    const meta = STATUS_META[se];
+    const prazoData = addDias(p.dataPedido, p.prazoDias);
+    return `
+      <div class="via">
+        <div class="via-header">
+          <span class="via-tag">${rotulo}</span>
+          <span class="via-empresa">Controle de Pedidos — Placas</span>
+        </div>
+        <h3>${escapeHtml(p.nomeFalecido)}</h3>
+        <div class="sub">${fmtDate(p.dataNascimento)} — ${fmtDate(p.dataFalecimento)} &nbsp;•&nbsp; Pedido #${String(p.id).slice(-5)}</div>
+        <span class="via-status">${meta.label}</span>
+        ${p.comFrase === "sim" && p.fraseTexto ? `<div class="frase">&ldquo;${escapeHtml(p.fraseTexto)}&rdquo;</div>` : ""}
+        <div class="via-grid">
+          <div><b>Foto</b>${p.comFoto === "sim" ? "Com foto" : "Sem foto"}</div>
+          <div><b>Frase</b>${p.comFrase === "sim" ? "Com frase" : "Sem frase"}</div>
+          <div><b>Cliente</b>${escapeHtml(p.clienteNome || "—")}</div>
+          <div><b>Telefone</b>${escapeHtml(p.clienteTelefone || "—")}</div>
+          ${p.clienteEmail ? `<div><b>E-mail</b>${escapeHtml(p.clienteEmail)}</div>` : ""}
+          ${p.clienteEndereco ? `<div class="full"><b>Endereço</b>${escapeHtml(p.clienteEndereco)}</div>` : ""}
+          <div><b>Data do pedido</b>${fmtDate(p.dataPedido)}</div>
+          <div><b>Prazo</b>${p.prazoDias} dias (até ${prazoData ? prazoData.toLocaleDateString("pt-BR") : "—"})</div>
+        </div>
+        ${p.observacoes ? `<div class="via-obs"><b>Observações:</b> ${escapeHtml(p.observacoes)}</div>` : ""}
+        <div class="via-assinatura">
+          <div>Assinatura do cliente</div>
+          <div>Data de retirada / entrega</div>
+        </div>
+        <div class="via-disclaimer">${DISCLAIMER}</div>
+      </div>`;
+  }
+
+  function imprimirPedido(id){
+    const p = pedidos.find(x => String(x.id) === String(id));
+    if(!p) return;
+    const area = document.getElementById("printArea");
+    area.innerHTML =
+      viaHtml(p, "Via — Arquivo") +
+      `<div class="corte">Corte aqui</div>` +
+      viaHtml(p, "Via — Cliente");
+    window.print();
+  }
+
   async function excluirPedido(id){
     if(!confirm("Excluir este pedido? Esta ação não pode ser desfeita e vale para todos os colegas.")) return;
     try{
       const data = await apiPost({ action: "excluirPedido", id: id });
       pedidos = data.pedidos || [];
-      fornecedores = data.fornecedores || [];
       renderLista();
     }catch(err){
       mostrarErro("Não foi possível excluir: " + err.message);
     }
   }
 
-  // ---------- modal fornecedores ----------
-  const overlayForn = document.getElementById("overlayForn");
-  document.getElementById("btnFornecedores").addEventListener("click", () => {
-    renderListaFornecedores();
-    overlayForn.classList.add("open");
-  });
-  document.getElementById("modalFornClose").addEventListener("click", () => overlayForn.classList.remove("open"));
-  document.getElementById("btnFecharForn").addEventListener("click", () => overlayForn.classList.remove("open"));
-  overlayForn.addEventListener("click", (e) => { if(e.target === overlayForn) overlayForn.classList.remove("open"); });
-
-  async function persistirFornecedores(){
-    const data = await apiPost({ action: "salvarFornecedores", fornecedores: fornecedores });
-    pedidos = data.pedidos || [];
-    fornecedores = data.fornecedores || [];
-    renderListaFornecedores();
-    renderFornecedorSelects();
-    renderLista();
-  }
-
-  document.getElementById("btnAddForn").addEventListener("click", async () => {
-    const input = document.getElementById("novoFornNome");
-    const nome = input.value.trim();
-    if(!nome) return;
-    if(fornecedores.includes(nome)){ alert("Essa empresa já está cadastrada."); return; }
-    fornecedores.push(nome);
-    input.value = "";
-    try{
-      await persistirFornecedores();
-    }catch(err){
-      mostrarErro("Não foi possível salvar a lista de terceirizados: " + err.message);
-    }
-  });
-
-  document.getElementById("listaFornecedores").addEventListener("click", async (e) => {
-    const idx = e.target.getAttribute("data-remove-forn");
-    if(idx === null) return;
-    fornecedores.splice(Number(idx), 1);
-    try{
-      await persistirFornecedores();
-    }catch(err){
-      mostrarErro("Não foi possível remover a empresa: " + err.message);
-    }
-  });
-
   // ---------- filtros: eventos ----------
-  ["fBusca","fStatus","fFoto","fFrase","fFornecedor","fDataDe","fDataAte","fOrdenar"].forEach(id => {
+  ["fBusca","fStatus","fFoto","fFrase","fDataDe","fDataAte","fOrdenar"].forEach(id => {
     document.getElementById(id).addEventListener("input", renderLista);
     document.getElementById(id).addEventListener("change", renderLista);
   });
@@ -928,7 +935,6 @@
     document.getElementById("fStatus").value = "";
     document.getElementById("fFoto").value = "";
     document.getElementById("fFrase").value = "";
-    document.getElementById("fFornecedor").value = "";
     document.getElementById("fDataDe").value = "";
     document.getElementById("fDataAte").value = "";
     document.getElementById("fOrdenar").value = "data_desc";
