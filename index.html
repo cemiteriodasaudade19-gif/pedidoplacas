@@ -47,7 +47,7 @@
   .topbar{
     background:linear-gradient(180deg,#2E2C29,#26241F);
     color:#EFEAE0;
-    padding:22px 32px;
+    padding:18px 32px;
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -66,11 +66,20 @@
   .brand .plate span{
     font-family:'Source Serif 4',serif;font-weight:600;color:#F4EEE2;font-size:18px;
   }
-  .brand h1{margin:0;font-size:21px;font-weight:600;letter-spacing:.2px;}
-  .brand p{margin:2px 0 0;font-size:12.5px;color:#C9C2B2;font-weight:400;font-family:'Inter',sans-serif;}
+  .brand h1{margin:0;font-size:20px;font-weight:600;letter-spacing:.2px;}
+  .brand p{margin:2px 0 0;font-size:12px;color:#C9C2B2;font-weight:400;font-family:'Inter',sans-serif;}
+
+  .nav-toggle{
+    display:flex;background:rgba(0,0,0,.25);border-radius:999px;padding:3px;gap:2px;
+  }
+  .nav-toggle button{
+    border:none;background:transparent;color:#C9C2B2;font-family:'Inter',sans-serif;
+    font-size:13px;font-weight:600;padding:8px 16px;border-radius:999px;cursor:pointer;
+  }
+  .nav-toggle button.active{background:var(--bronze);color:#fff;}
 
   .sync-status{
-    display:flex;align-items:center;gap:8px;font-size:12.5px;color:#C9C2B2;
+    display:flex;align-items:center;gap:8px;font-size:12px;color:#C9C2B2;
     border:1px solid rgba(239,234,224,.25);border-radius:999px;padding:6px 12px;
   }
   .sync-dot{width:8px;height:8px;border-radius:50%;background:#7FB68A;flex:none;}
@@ -81,7 +90,7 @@
   .btn{
     border:none;border-radius:7px;padding:11px 18px;font-family:'Inter',sans-serif;
     font-size:14px;font-weight:600;cursor:pointer;transition:transform .12s ease, opacity .12s ease;
-    display:inline-flex;align-items:center;gap:8px;
+    display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
   }
   .btn:active{transform:scale(.97);}
   .btn:disabled{opacity:.55;cursor:not-allowed;}
@@ -118,9 +127,9 @@
   }
   .field{display:flex;flex-direction:column;gap:6px;}
   .field label{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;}
-  select,input[type=text],input[type=date],input[type=number],input[type=tel],input[type=email],textarea{
+  select,input[type=text],input[type=date],input[type=number],input[type=tel],input[type=email],input[type=password],textarea{
     font-family:'Inter',sans-serif;font-size:14px;padding:9px 10px;border-radius:7px;
-    border:1px solid var(--line);background:var(--surface-soft);color:var(--ink);
+    border:1px solid var(--line);background:var(--surface-soft);color:var(--ink);width:100%;
   }
   select:focus,input:focus,textarea:focus{outline:2px solid var(--patina);outline-offset:1px;background:#fff;}
   .filters .field.wide{grid-column:span 2;}
@@ -141,14 +150,12 @@
   .chip.atrasado.dot::before{background:var(--st-atrasado);}
 
   .date-group{margin-bottom:34px;}
-  .date-heading{
-    display:flex;align-items:center;gap:12px;margin-bottom:14px;
-  }
+  .date-heading{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
   .date-heading h2{font-size:17px;margin:0;font-weight:600;white-space:nowrap;}
   .date-heading .rule{flex:1;height:1px;background:repeating-linear-gradient(90deg,var(--bronze) 0 6px, transparent 6px 12px);opacity:.55;}
   .date-heading .count{font-size:12.5px;color:var(--muted);font-family:'Inter',sans-serif;}
 
-  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;}
 
   .card{
     background:var(--surface);border:1px solid var(--line);border-radius:12px;
@@ -165,32 +172,71 @@
     display:flex;align-items:center;justify-content:space-between;
   }
   .card-body{padding:16px;}
-  .card-body h3{margin:0 0 3px;font-size:17px;font-weight:600;}
-  .card-body .dates{font-size:12.5px;color:var(--muted);margin-bottom:10px;}
-  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
-  .tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--surface-soft);color:var(--muted);border:1px solid var(--line);}
-  .frase-box{
-    font-family:'Source Serif 4',serif;font-style:italic;font-size:13.5px;color:var(--ink);
-    background:var(--surface-soft);border-left:3px solid var(--bronze);padding:8px 10px;border-radius:4px;
-    margin-bottom:12px;
+
+  /* ---------- mockup da placa ---------- */
+  .placa-mockup{
+    display:flex;gap:14px;align-items:center;
+    background:linear-gradient(160deg,#161513,#0c0b0a);
+    border-radius:8px;padding:16px 18px;position:relative;
+    box-shadow:0 0 0 2px var(--bronze), 0 0 0 5px rgba(140,106,78,.3) inset;
   }
+  .placa-mockup--compacta{padding:11px 13px;gap:10px;box-shadow:0 0 0 2px var(--bronze), 0 0 0 4px rgba(140,106,78,.3) inset;}
+  .placa-foto{
+    flex:none;width:76px;height:76px;border-radius:50%;
+    background:#1e1c19;border:2px solid var(--bronze);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .placa-mockup--compacta .placa-foto{width:52px;height:52px;border-width:1.5px;}
+  .placa-foto-icone{width:38px;height:38px;fill:none;stroke:#8c7a5e;stroke-width:2.4;opacity:.55;}
+  .placa-mockup--compacta .placa-foto-icone{width:26px;height:26px;}
+  .placa-texto{flex:1;min-width:0;}
+  .placa-nome{
+    font-family:'Source Serif 4',serif;font-weight:700;color:#E8CD8A;
+    text-transform:uppercase;letter-spacing:.02em;line-height:1.18;
+    margin-bottom:6px;word-break:break-word;
+    text-shadow:0 1px 0 rgba(0,0,0,.4);
+  }
+  .placa-mockup--compacta .placa-nome{margin-bottom:4px;}
+  .placa-data{
+    font-size:12.5px;color:#D8C393;display:flex;align-items:center;gap:6px;margin-bottom:2px;letter-spacing:.02em;
+  }
+  .placa-mockup--compacta .placa-data{font-size:10.5px;}
+  .placa-ico{color:#C9A227;font-size:11px;flex:none;}
+  .placa-frase{
+    margin-top:6px;font-family:'Source Serif 4',serif;font-style:italic;font-size:12px;color:#D8C393;opacity:.92;
+  }
+  .placa-mockup--compacta .placa-frase{font-size:10.5px;margin-top:4px;}
+  .placa-frase-vazia{visibility:hidden;height:12px;}
+
+  .placa-meta{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0;}
+  .tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--surface-soft);color:var(--muted);border:1px solid var(--line);}
+
+  .cliente-section{
+    background:var(--surface-soft);border:1px solid var(--line);border-radius:9px;
+    padding:12px 14px;margin-top:4px;
+  }
+  .cliente-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--bronze-dark);margin-bottom:8px;}
   .info-line{font-size:13px;color:var(--ink);margin-bottom:4px;display:flex;justify-content:space-between;gap:8px;}
   .info-line span:first-child{color:var(--muted);}
-  .deadline-bar{margin-top:12px;}
-  .deadline-track{height:6px;border-radius:99px;background:var(--surface-soft);overflow:hidden;border:1px solid var(--line);}
-  .deadline-fill{height:100%;border-radius:99px;}
-  .deadline-label{font-size:11.5px;margin-top:5px;color:var(--muted);display:flex;justify-content:space-between;}
+  .valores-line{font-size:13px;margin-top:10px;display:flex;justify-content:space-between;padding-top:10px;border-top:1px dashed var(--line);}
+  .valores-line b{font-family:'Source Serif 4',serif;}
+  .pag-badge{font-size:10.5px;font-weight:700;text-transform:uppercase;padding:2px 8px;border-radius:999px;}
+  .pag-pendente{background:var(--st-atrasado-bg);color:var(--st-atrasado);}
+  .pag-parcial{background:var(--st-producao-bg);color:var(--st-producao);}
+  .pag-pago{background:var(--st-pronta-bg);color:var(--st-pronta);}
+
+  .obs-line{font-size:12.5px;color:var(--muted);margin-top:10px;}
+
   .card-footer{
     display:flex;justify-content:space-between;align-items:center;gap:8px;
     padding:12px 16px;border-top:1px solid var(--line);background:var(--surface-soft);
   }
-  .card-footer .actions{display:flex;gap:6px;}
+  .card-footer .actions{display:flex;gap:6px;flex-wrap:wrap;}
   .icon-btn{
     border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 9px;font-size:12.5px;
     cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;color:var(--ink);
   }
   .icon-btn:hover{background:var(--surface-soft);}
-  .icon-btn:disabled{opacity:.5;cursor:not-allowed;}
   .disclaimer{
     font-size:10px;line-height:1.4;color:#9C9891;padding:10px 16px 14px;border-top:1px dashed var(--line);
   }
@@ -208,12 +254,12 @@
   }
   .overlay.open{display:flex;}
   .modal{
-    background:var(--surface);border-radius:14px;max-width:640px;width:100%;
+    background:var(--surface);border-radius:14px;max-width:660px;width:100%;
     box-shadow:0 20px 60px rgba(0,0,0,.25);
   }
   .modal-head{
     padding:20px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;
-    position:sticky;top:0;background:var(--surface);border-radius:14px 14px 0 0;
+    position:sticky;top:0;background:var(--surface);border-radius:14px 14px 0 0;z-index:2;
   }
   .modal-head h2{margin:0;font-size:19px;}
   .modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);line-height:1;}
@@ -230,62 +276,78 @@
   .hint{font-size:11.5px;color:var(--muted);margin-top:3px;}
   .modal-error{font-size:12.5px;color:var(--st-atrasado);margin-right:auto;}
 
+  /* ---------- admin ---------- */
+  .admin-locked{
+    text-align:center;padding:80px 20px;color:var(--muted);
+  }
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:26px;}
+  .kpi-card{
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;
+  }
+  .kpi-card .kpi-label{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;margin-bottom:6px;}
+  .kpi-card .kpi-value{font-family:'Source Serif 4',serif;font-size:26px;font-weight:600;}
+  .kpi-card .kpi-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+
+  .admin-section{
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:24px;
+  }
+  .admin-section h3{margin:0 0 4px;font-size:16.5px;}
+  .admin-section .admin-sub{font-size:12.5px;color:var(--muted);margin-bottom:16px;}
+
+  .bar-chart{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:10px;}
+  .bar-chart .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+  .bar-chart .bar{width:70%;background:var(--bronze);border-radius:4px 4px 0 0;min-height:3px;}
+  .bar-chart .bar-num{font-size:11px;color:var(--ink);font-weight:600;margin-bottom:3px;}
+  .bar-chart .bar-label{font-size:10.5px;color:var(--muted);margin-top:6px;}
+
+  .alert-row{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px;
+  }
+  .alert-row:last-child{border-bottom:none;}
+  .alert-row .nome{font-weight:600;}
+  .alert-row .sub{font-size:11.5px;color:var(--muted);}
+  .alert-pill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap;}
+  .alert-pill.atraso{background:var(--st-atrasado-bg);color:var(--st-atrasado);}
+  .alert-pill.avencer{background:var(--st-producao-bg);color:var(--st-producao);}
+
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:9px;}
+  table.planilha{border-collapse:collapse;width:100%;font-size:12.5px;min-width:900px;}
+  table.planilha th{
+    background:var(--surface-soft);text-align:left;padding:9px 10px;font-size:11px;text-transform:uppercase;
+    letter-spacing:.04em;color:var(--muted);border-bottom:1px solid var(--line);white-space:nowrap;
+  }
+  table.planilha td{padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  table.planilha tr:last-child td{border-bottom:none;}
+
   @media (max-width:640px){
     .modal-body{grid-template-columns:1fr;}
     .topbar{padding:16px 18px;flex-wrap:wrap;}
     .wrap{padding:20px 14px 60px;}
+    .placa-mockup{flex-direction:column;align-items:flex-start;}
   }
 
   /* ---------- impressão: espelho em 2 vias (A4) ---------- */
   .print-area{display:none;}
   @page{ size:A4; margin:10mm; }
   @media print{
+    * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important; }
     body *{visibility:hidden;}
     .print-area, .print-area *{visibility:visible;}
-    .print-area{
-      display:block;position:absolute;top:0;left:0;width:100%;margin:0;padding:0;
-    }
-    .via{
-      height:132mm;
-      box-sizing:border-box;
-      padding:0 2mm 4mm;
-      page-break-inside:avoid;
-      font-family:'Inter',system-ui,sans-serif;
-      color:#000;
-    }
-    .via-header{
-      display:flex;justify-content:space-between;align-items:baseline;
-      border-bottom:2px solid #000;padding-bottom:5px;margin-bottom:10px;
-    }
-    .via-header .via-tag{
-      font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-      border:1px solid #000;border-radius:3px;padding:2px 8px;
-    }
-    .via-header .via-empresa{font-family:'Source Serif 4',serif;font-weight:600;font-size:14px;}
-    .via h3{
-      font-family:'Source Serif 4',serif;font-size:17px;margin:0 0 2px;
-    }
-    .via .sub{font-size:11px;color:#333;margin-bottom:8px;}
-    .via .frase{font-family:'Source Serif 4',serif;font-style:italic;font-size:12.5px;margin:6px 0;}
-    .via-grid{
-      display:grid;grid-template-columns:1fr 1fr;gap:2px 18px;font-size:11.5px;margin-top:6px;
-    }
+    .print-area{display:block;position:absolute;top:0;left:0;width:100%;margin:0;padding:0;}
+    .via{height:128mm;box-sizing:border-box;padding:0 2mm 4mm;page-break-inside:avoid;font-family:'Inter',system-ui,sans-serif;color:#000;}
+    .via-header{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #000;padding-bottom:5px;margin-bottom:8px;}
+    .via-header .via-tag{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:1px solid #000;border-radius:3px;padding:2px 8px;}
+    .via-header .via-empresa{font-family:'Source Serif 4',serif;font-weight:600;font-size:13px;}
+    .via .placa-mockup{margin-bottom:8px;}
+    .via .cliente-section{background:#f4f4f2;margin-top:8px;}
+    .via-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 18px;font-size:11px;margin-top:4px;}
     .via-grid .full{grid-column:1/-1;}
-    .via-grid b{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:#555;font-weight:600;}
-    .via-status{
-      display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;
-      border:1px solid #000;border-radius:3px;padding:2px 8px;margin-top:6px;
-    }
-    .via-obs{font-size:11px;margin-top:8px;}
-    .via-disclaimer{font-size:8px;color:#444;margin-top:10px;line-height:1.4;}
-    .via-assinatura{
-      margin-top:16px;display:flex;justify-content:space-between;gap:20px;font-size:10.5px;
-    }
+    .via-grid b{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:#555;font-weight:600;}
+    .via-obs{font-size:10.5px;margin-top:6px;}
+    .via-disclaimer{font-size:8px;color:#444;margin-top:8px;line-height:1.4;}
+    .via-assinatura{margin-top:12px;display:flex;justify-content:space-between;gap:20px;font-size:10px;}
     .via-assinatura div{flex:1;border-top:1px solid #000;padding-top:4px;text-align:center;}
-    .corte{
-      display:flex;align-items:center;gap:10px;color:#777;font-size:9px;letter-spacing:.15em;
-      text-transform:uppercase;margin:3mm 0;
-    }
+    .corte{display:flex;align-items:center;gap:10px;color:#777;font-size:9px;letter-spacing:.15em;text-transform:uppercase;margin:3mm 0;}
     .corte::before, .corte::after{content:"";flex:1;border-top:1px dashed #777;}
   }
 </style>
@@ -301,6 +363,10 @@
     </div>
   </div>
   <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <div class="nav-toggle">
+      <button id="navPedidos" class="active">Pedidos</button>
+      <button id="navAdmin">Administrador</button>
+    </div>
     <div class="sync-status" id="syncStatus"><span class="sync-dot" id="syncDot"></span><span id="syncText">—</span></div>
     <button class="btn btn-ghost" id="btnAtualizar">Atualizar agora</button>
     <button class="btn btn-primary" id="btnNovo">+ Novo pedido</button>
@@ -313,7 +379,7 @@
     <h3>Configuração necessária</h3>
     Este arquivo ainda não está conectado à planilha compartilhada. Abra o <code>index.html</code>, encontre a constante
     <code>API_URL</code> no início do bloco <code>&lt;script&gt;</code> e cole ali a URL do seu Web App do Google Apps Script
-    (veja o guia <code>Code.gs</code> / <code>COMO_PUBLICAR.md</code> que acompanha este projeto).
+    (veja o guia <code>COMO_PUBLICAR.md</code> que acompanha este projeto).
   </div>
 
   <div id="errorBanner" class="error-banner" style="display:none;">
@@ -321,64 +387,70 @@
     <button class="btn btn-secondary" id="btnTentarNovamente">Tentar novamente</button>
   </div>
 
-  <div class="summary-row" id="summaryRow"></div>
+  <!-- ===================== VIEW: PEDIDOS ===================== -->
+  <div id="viewPedidos">
 
-  <div class="filters">
-    <div class="field wide">
-      <label for="fBusca">Buscar (falecido ou cliente)</label>
-      <input type="text" id="fBusca" placeholder="Nome do falecido ou do cliente...">
+    <div class="summary-row" id="summaryRow"></div>
+
+    <div class="filters">
+      <div class="field wide">
+        <label for="fBusca">Buscar (falecido ou cliente)</label>
+        <input type="text" id="fBusca" placeholder="Nome do falecido ou do cliente...">
+      </div>
+      <div class="field">
+        <label for="fStatus">Status</label>
+        <select id="fStatus">
+          <option value="">Todos</option>
+          <option value="recebido">Recebido</option>
+          <option value="producao">Em produção</option>
+          <option value="aprovacao">Aguardando aprovação</option>
+          <option value="pronta">Pronta</option>
+          <option value="entregue">Entregue / instalada</option>
+          <option value="atrasado">Atrasado</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="fFoto">Foto</label>
+        <select id="fFoto">
+          <option value="">Todos</option>
+          <option value="sim">Com foto</option>
+          <option value="nao">Sem foto</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="fFrase">Frase</label>
+        <select id="fFrase">
+          <option value="">Todos</option>
+          <option value="sim">Com frase</option>
+          <option value="nao">Sem frase</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="fDataDe">Data do pedido — de</label>
+        <input type="date" id="fDataDe">
+      </div>
+      <div class="field">
+        <label for="fDataAte">Data do pedido — até</label>
+        <input type="date" id="fDataAte">
+      </div>
+      <div class="field">
+        <label for="fOrdenar">Ordenar por</label>
+        <select id="fOrdenar">
+          <option value="data_desc">Data do pedido (mais recente)</option>
+          <option value="data_asc">Data do pedido (mais antiga)</option>
+          <option value="nome_asc">Nome do falecido (A-Z)</option>
+        </select>
+      </div>
+      <div class="filters-actions">
+        <button class="btn btn-secondary" id="btnLimparFiltros">Limpar filtros</button>
+      </div>
     </div>
-    <div class="field">
-      <label for="fStatus">Status</label>
-      <select id="fStatus">
-        <option value="">Todos</option>
-        <option value="recebido">Recebido</option>
-        <option value="producao">Em produção</option>
-        <option value="aprovacao">Aguardando aprovação</option>
-        <option value="pronta">Pronta</option>
-        <option value="entregue">Entregue / instalada</option>
-        <option value="atrasado">Atrasado</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="fFoto">Foto</label>
-      <select id="fFoto">
-        <option value="">Todos</option>
-        <option value="sim">Com foto</option>
-        <option value="nao">Sem foto</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="fFrase">Frase</label>
-      <select id="fFrase">
-        <option value="">Todos</option>
-        <option value="sim">Com frase</option>
-        <option value="nao">Sem frase</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="fDataDe">Data do pedido — de</label>
-      <input type="date" id="fDataDe">
-    </div>
-    <div class="field">
-      <label for="fDataAte">Data do pedido — até</label>
-      <input type="date" id="fDataAte">
-    </div>
-    <div class="field">
-      <label for="fOrdenar">Ordenar por</label>
-      <select id="fOrdenar">
-        <option value="data_desc">Data do pedido (mais recente)</option>
-        <option value="data_asc">Data do pedido (mais antiga)</option>
-        <option value="prazo_asc">Prazo mais próximo primeiro</option>
-        <option value="nome_asc">Nome do falecido (A-Z)</option>
-      </select>
-    </div>
-    <div class="filters-actions">
-      <button class="btn btn-secondary" id="btnLimparFiltros">Limpar filtros</button>
-    </div>
+
+    <div id="listaContainer"></div>
   </div>
 
-  <div id="listaContainer"></div>
+  <!-- ===================== VIEW: ADMINISTRADOR ===================== -->
+  <div id="viewAdmin" style="display:none;"></div>
 
 </div>
 
@@ -394,6 +466,8 @@
     </div>
     <form id="formPedido">
       <div class="modal-body">
+
+        <div class="field full" id="placaPreviewWrap"></div>
 
         <div class="section-label">Dados da placa</div>
         <div class="field full">
@@ -415,6 +489,7 @@
             <label><input type="radio" name="comFoto" value="sim"> Com foto</label>
             <label><input type="radio" name="comFoto" value="nao" checked> Sem foto</label>
           </div>
+          <p class="hint">O espaço da foto sempre aparece reservado na placa, mesmo quando não houver foto.</p>
         </fieldset>
 
         <fieldset>
@@ -444,14 +519,10 @@
           <input type="text" id="clienteEndereco">
         </div>
 
-        <div class="section-label">Pedido e prazo</div>
+        <div class="section-label">Pedido, status e valores</div>
         <div class="field">
           <label for="dataPedido">Data do pedido *</label>
           <input type="date" id="dataPedido" required>
-        </div>
-        <div class="field">
-          <label for="prazoDias">Prazo (dias) — 45 a 60 *</label>
-          <input type="number" id="prazoDias" min="45" max="60" value="45" required>
         </div>
         <div class="field">
           <label for="status">Status *</label>
@@ -461,6 +532,22 @@
             <option value="aprovacao">Aguardando aprovação do cliente</option>
             <option value="pronta">Pronta para entrega/instalação</option>
             <option value="entregue">Entregue / instalada</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="valorCobrado">Valor cobrado (R$)</label>
+          <input type="number" id="valorCobrado" min="0" step="0.01" placeholder="0,00">
+        </div>
+        <div class="field">
+          <label for="valorPago">Valor pago (R$)</label>
+          <input type="number" id="valorPago" min="0" step="0.01" placeholder="0,00">
+        </div>
+        <div class="field full">
+          <label for="statusPagamento">Status do pagamento</label>
+          <select id="statusPagamento">
+            <option value="pendente">Pendente</option>
+            <option value="parcial">Parcial</option>
+            <option value="pago">Pago</option>
           </select>
         </div>
 
@@ -478,6 +565,33 @@
   </div>
 </div>
 
+<!-- Modal: login administrador -->
+<div class="overlay" id="overlayLogin">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-head">
+      <h2>Área do administrador</h2>
+      <button class="modal-close" id="modalLoginClose">&times;</button>
+    </div>
+    <form id="formLogin">
+      <div class="modal-body" style="grid-template-columns:1fr;">
+        <div class="field full">
+          <label for="loginEmail">E-mail</label>
+          <input type="email" id="loginEmail" required autocomplete="username">
+        </div>
+        <div class="field full">
+          <label for="loginSenha">Senha</label>
+          <input type="password" id="loginSenha" required autocomplete="current-password">
+        </div>
+      </div>
+      <div class="modal-foot">
+        <span class="modal-error" id="loginError"></span>
+        <button type="button" class="btn btn-secondary" id="btnCancelarLogin">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Entrar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
 (function(){
   "use strict";
@@ -487,8 +601,12 @@
    * (Extensões > Apps Script > Implantar > Nova implantação > App da Web).
    * A URL termina em /exec
    * ========================================================================= */
-  const API_URL = "https://script.google.com/macros/s/AKfycbyZt5oPRDBRc-ckmNwZXUIQzGulkRkglnqWaJ5xwYVtILNoV6Osnbd5c80jpLcVu4MGgg/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbwI9sELfh0y2RI9zjoY3G-rL6G5k8Yi3lqEbhu_cvLz1y7U9ra4uSciQMB_1jfCmY3oFQ/exec";
   const AUTO_REFRESH_MS = 20000; // atualiza automaticamente a cada 20s
+  const PRAZO_PADRAO_DIAS = 45;  // usado internamente para alertas do administrador
+
+  const ADMIN_EMAIL = "cemiteriodasaudade19@gmail.com";
+  const ADMIN_SENHA = "cemiterio123";
 
   const DISCLAIMER = "O atendente, em hipótese nenhuma, será responsável pelo serviço de confecção da placa, o qual é executado por empresa terceirizada escolhida pela diretoria.";
 
@@ -504,6 +622,8 @@
   let pedidos = [];
   let editandoId = null;
   let refreshTimer = null;
+  let viewAtual = "pedidos"; // "pedidos" | "admin"
+  let adminLogado = sessionStorage.getItem("adminLogado") === "1";
 
   const configurado = () => API_URL && API_URL.indexOf("COLE_AQUI") === -1;
 
@@ -514,14 +634,11 @@
     dot.className = "sync-dot" + (state === "loading" ? " loading" : state === "error" ? " error" : "");
     text.textContent = msg;
   }
-
   function mostrarErro(msg){
     document.getElementById("errorBanner").style.display = "flex";
     document.getElementById("errorText").textContent = msg;
   }
-  function esconderErro(){
-    document.getElementById("errorBanner").style.display = "none";
-  }
+  function esconderErro(){ document.getElementById("errorBanner").style.display = "none"; }
 
   // ---------- chamadas à API (planilha) ----------
   async function apiGetDados(){
@@ -531,11 +648,10 @@
     if(!data.ok) throw new Error(data.erro || "Erro desconhecido ao carregar dados");
     return data;
   }
-
   async function apiPost(payload){
     const resp = await fetch(API_URL, {
       method: "POST",
-      headers: {"Content-Type": "text/plain;charset=utf-8"}, // evita preflight CORS
+      headers: {"Content-Type": "text/plain;charset=utf-8"},
       body: JSON.stringify(payload)
     });
     if(!resp.ok) throw new Error("Falha ao salvar na planilha (HTTP " + resp.status + ")");
@@ -557,13 +673,12 @@
       pedidos = data.pedidos || [];
       esconderErro();
       setSyncStatus("ok", "Atualizado às " + new Date().toLocaleTimeString("pt-BR"));
-      renderLista();
+      if(viewAtual === "admin") renderAdmin(); else renderLista();
     }catch(err){
       setSyncStatus("error", "Falha ao sincronizar");
       mostrarErro("Não foi possível falar com a planilha: " + err.message);
     }
   }
-
   function iniciarAutoAtualizacao(){
     if(refreshTimer) clearInterval(refreshTimer);
     refreshTimer = setInterval(() => carregarDados(true), AUTO_REFRESH_MS);
@@ -574,20 +689,17 @@
     if(!str) return null;
     let s = String(str).trim();
     if(!s) return null;
+    if(s.includes("T")) s = s.split("T")[0];
     let y, m, d;
-    if(s.includes("T")) s = s.split("T")[0]; // corta hora, se vier junto (ex: da planilha)
     if(s.includes("-")){
       const p = s.split("-").map(Number);
       if(p.length !== 3) return null;
       [y, m, d] = p;
     } else if(s.includes("/")){
-      // formato dd/mm/aaaa, caso a planilha devolva nesse padrão
       const p = s.split("/").map(Number);
       if(p.length !== 3) return null;
       [d, m, y] = p;
-    } else {
-      return null;
-    }
+    } else { return null; }
     if(!y || !m || !d || isNaN(y) || isNaN(m) || isNaN(d)) return null;
     const dt = new Date(y, m - 1, d);
     if(isNaN(dt.getTime())) return null;
@@ -606,11 +718,50 @@
   function hoje(){ const d = new Date(); d.setHours(0,0,0,0); return d; }
   function diasEntre(a,b){ return Math.round((a - b) / 86400000); }
 
+  function prazoDe(p){ return addDias(p.dataPedido, p.prazoDias || PRAZO_PADRAO_DIAS); }
   function statusEfetivo(p){
     if(p.status === "entregue") return "entregue";
-    const prazo = addDias(p.dataPedido, p.prazoDias);
+    const prazo = prazoDe(p);
     if(prazo && diasEntre(hoje(), prazo) > 0) return "atrasado";
     return p.status;
+  }
+  function fmtMoeda(v){ return (Number(v)||0).toLocaleString("pt-BR", {style:"currency", currency:"BRL"}); }
+
+  function escapeHtml(str){
+    const div = document.createElement("div");
+    div.textContent = str == null ? "" : str;
+    return div.innerHTML;
+  }
+
+  // ---------- mockup visual da placa ----------
+  function fontSizeParaNome(nome, base){
+    base = base || 26;
+    const len = (nome || "").length;
+    let px = base;
+    if(len > 14) px = base * 0.85;
+    if(len > 22) px = base * 0.7;
+    if(len > 30) px = base * 0.58;
+    if(len > 40) px = base * 0.48;
+    return Math.max(px, 11).toFixed(0) + "px";
+  }
+  function gerarPlacaHtml(p, compacta){
+    const nome = (p.nomeFalecido && p.nomeFalecido.trim()) ? p.nomeFalecido.toUpperCase() : "NOME DO FALECIDO";
+    const nasc = p.dataNascimento ? fmtDate(p.dataNascimento) : "00/00/0000";
+    const falec = p.dataFalecimento ? fmtDate(p.dataFalecimento) : "00/00/0000";
+    const temFrase = p.comFrase === "sim" && p.fraseTexto && p.fraseTexto.trim();
+    const baseFonte = compacta ? 17 : 27;
+    return `
+      <div class="placa-mockup${compacta ? " placa-mockup--compacta" : ""}">
+        <div class="placa-foto" aria-hidden="true">
+          <svg viewBox="0 0 44 44" class="placa-foto-icone"><circle cx="22" cy="16" r="9"/><path d="M4 40c0-10 8-16 18-16s18 6 18 16"/></svg>
+        </div>
+        <div class="placa-texto">
+          <div class="placa-nome" style="font-size:${fontSizeParaNome(nome, baseFonte)}">${escapeHtml(nome)}</div>
+          <div class="placa-data"><span class="placa-ico">&#9733;</span>${nasc}</div>
+          <div class="placa-data"><span class="placa-ico">&#10013;</span>${falec}</div>
+          ${temFrase ? `<div class="placa-frase">&ldquo;${escapeHtml(p.fraseTexto.toUpperCase())}&rdquo;</div>` : `<div class="placa-frase placa-frase-vazia">&nbsp;</div>`}
+        </div>
+      </div>`;
   }
 
   // ---------- render: resumo ----------
@@ -620,16 +771,8 @@
     const el = document.getElementById("summaryRow");
     el.innerHTML = `
       <div class="chip"><b>${pedidos.length}</b> pedidos no total</div>
-      ${Object.keys(STATUS_META).map(k => `
-        <div class="chip dot ${k}">${STATUS_META[k].label}: <b>${counts[k]}</b></div>
-      `).join("")}
+      ${Object.keys(STATUS_META).map(k => `<div class="chip dot ${k}">${STATUS_META[k].label}: <b>${counts[k]}</b></div>`).join("")}
     `;
-  }
-
-  function escapeHtml(str){
-    const div = document.createElement("div");
-    div.textContent = str;
-    return div.innerHTML;
   }
 
   // ---------- filtros ----------
@@ -658,13 +801,8 @@
     lista.sort((a,b) => {
       if(ordenar === "data_asc") return a.dataPedido.localeCompare(b.dataPedido);
       if(ordenar === "nome_asc") return a.nomeFalecido.localeCompare(b.nomeFalecido, "pt-BR");
-      if(ordenar === "prazo_asc"){
-        const da = addDias(a.dataPedido, a.prazoDias), db = addDias(b.dataPedido, b.prazoDias);
-        return da - db;
-      }
-      return b.dataPedido.localeCompare(a.dataPedido); // data_desc default
+      return b.dataPedido.localeCompare(a.dataPedido);
     });
-
     return lista;
   }
 
@@ -675,29 +813,18 @@
     const container = document.getElementById("listaContainer");
 
     if(pedidos.length === 0){
-      container.innerHTML = `
-        <div class="empty-state">
-          <h3>Nenhum pedido cadastrado</h3>
-          <p>Clique em "+ Novo pedido" para registrar a primeira encomenda de placa.</p>
-        </div>`;
+      container.innerHTML = `<div class="empty-state"><h3>Nenhum pedido cadastrado</h3><p>Clique em "+ Novo pedido" para registrar a primeira encomenda de placa.</p></div>`;
       return;
     }
     if(lista.length === 0){
-      container.innerHTML = `
-        <div class="empty-state">
-          <h3>Nenhum resultado</h3>
-          <p>Nenhum pedido corresponde aos filtros selecionados.</p>
-        </div>`;
+      container.innerHTML = `<div class="empty-state"><h3>Nenhum resultado</h3><p>Nenhum pedido corresponde aos filtros selecionados.</p></div>`;
       return;
     }
 
     const grupos = [];
     const mapa = {};
     lista.forEach(p => {
-      if(!mapa[p.dataPedido]){
-        mapa[p.dataPedido] = [];
-        grupos.push(p.dataPedido);
-      }
+      if(!mapa[p.dataPedido]){ mapa[p.dataPedido] = []; grupos.push(p.dataPedido); }
       mapa[p.dataPedido].push(p);
     });
 
@@ -708,65 +835,50 @@
           <div class="rule"></div>
           <div class="count">${mapa[dataStr].length} pedido${mapa[dataStr].length>1?"s":""}</div>
         </div>
-        <div class="cards">
-          ${mapa[dataStr].map(cardHtml).join("")}
-        </div>
+        <div class="cards">${mapa[dataStr].map(cardHtml).join("")}</div>
       </div>
     `).join("");
 
-    container.querySelectorAll("[data-edit]").forEach(btn => {
-      btn.addEventListener("click", () => abrirModal(btn.getAttribute("data-edit")));
-    });
-    container.querySelectorAll("[data-print]").forEach(btn => {
-      btn.addEventListener("click", () => imprimirPedido(btn.getAttribute("data-print")));
-    });
-    container.querySelectorAll("[data-del]").forEach(btn => {
-      btn.addEventListener("click", () => excluirPedido(btn.getAttribute("data-del")));
-    });
+    container.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => abrirModal(btn.getAttribute("data-edit"))));
+    container.querySelectorAll("[data-print]").forEach(btn => btn.addEventListener("click", () => imprimirPedido(btn.getAttribute("data-print"))));
+    container.querySelectorAll("[data-del]").forEach(btn => btn.addEventListener("click", () => excluirPedido(btn.getAttribute("data-del"))));
   }
 
   function cardHtml(p){
     const se = statusEfetivo(p);
     const meta = STATUS_META[se];
-    const prazoData = addDias(p.dataPedido, p.prazoDias);
-    const restantes = prazoData ? diasEntre(prazoData, hoje()) : null;
-    const totalDias = Number(p.prazoDias);
-    const passados = prazoData ? (totalDias - restantes) : 0;
-    const pct = Math.max(0, Math.min(100, Math.round((passados/totalDias)*100)));
-    let barColor = "var(--st-pronta)";
-    if(se === "atrasado") barColor = "var(--st-atrasado)";
-    else if(restantes !== null && restantes <= 10) barColor = "var(--st-producao)";
-
-    const prazoTexto = se === "entregue"
-      ? "Concluído"
-      : (restantes === null ? "Data do pedido inválida" : (restantes < 0 ? `${Math.abs(restantes)} dia(s) em atraso` : `${restantes} dia(s) restante(s)`));
+    const pagLabel = {pendente:"Pendente", parcial:"Parcial", pago:"Pago"}[p.statusPagamento] || "Pendente";
+    const pagClass = {pendente:"pag-pendente", parcial:"pag-parcial", pago:"pag-pago"}[p.statusPagamento] || "pag-pendente";
 
     return `
     <div class="card">
       <div class="rivet"></div>
       <div class="card-status" style="background:${meta.bg};color:${meta.color};">
-        <span>${meta.label}</span>
-        <span>#${String(p.id).slice(-5)}</span>
+        <span>${meta.label}</span><span>#${String(p.id).slice(-5)}</span>
       </div>
       <div class="card-body">
-        <h3 class="serif">${escapeHtml(p.nomeFalecido)}</h3>
-        <div class="dates">${fmtDate(p.dataNascimento)} — ${fmtDate(p.dataFalecimento)}</div>
-        <div class="tags">
+        ${gerarPlacaHtml(p, true)}
+        <div class="placa-meta">
           <span class="tag">${p.comFoto === "sim" ? "Com foto" : "Sem foto"}</span>
           <span class="tag">${p.comFrase === "sim" ? "Com frase" : "Sem frase"}</span>
         </div>
-        ${p.comFrase === "sim" && p.fraseTexto ? `<div class="frase-box">&ldquo;${escapeHtml(p.fraseTexto)}&rdquo;</div>` : ""}
-        <div class="info-line"><span>Cliente</span><span>${escapeHtml(p.clienteNome)}</span></div>
-        <div class="info-line"><span>Telefone</span><span>${escapeHtml(p.clienteTelefone || "—")}</span></div>
-        ${p.clienteEmail ? `<div class="info-line"><span>E-mail</span><span>${escapeHtml(p.clienteEmail)}</span></div>` : ""}
-        <div class="info-line"><span>Data do pedido</span><span>${fmtDate(p.dataPedido)}</span></div>
-        <div class="info-line"><span>Prazo</span><span>${p.prazoDias} dias (até ${prazoData ? prazoData.toLocaleDateString("pt-BR") : "—"})</span></div>
-        ${p.observacoes ? `<div class="info-line"><span>Obs.</span><span>${escapeHtml(p.observacoes)}</span></div>` : ""}
 
-        <div class="deadline-bar">
-          <div class="deadline-track"><div class="deadline-fill" style="width:${pct}%;background:${barColor};"></div></div>
-          <div class="deadline-label"><span>${prazoTexto}</span><span>${pct}%</span></div>
+        <div class="cliente-section">
+          <div class="cliente-label">Dados do cliente</div>
+          <div class="info-line"><span>Cliente</span><span>${escapeHtml(p.clienteNome)}</span></div>
+          <div class="info-line"><span>Telefone</span><span>${escapeHtml(p.clienteTelefone || "—")}</span></div>
+          ${p.clienteEmail ? `<div class="info-line"><span>E-mail</span><span>${escapeHtml(p.clienteEmail)}</span></div>` : ""}
+          ${p.clienteEndereco ? `<div class="info-line"><span>Endereço</span><span>${escapeHtml(p.clienteEndereco)}</span></div>` : ""}
+          <div class="info-line"><span>Data do pedido</span><span>${fmtDate(p.dataPedido)}</span></div>
         </div>
+
+        ${(Number(p.valorCobrado) > 0 || Number(p.valorPago) > 0) ? `
+        <div class="valores-line">
+          <span>${fmtMoeda(p.valorCobrado)} cobrado${Number(p.valorPago)>0 ? " · " + fmtMoeda(p.valorPago) + " pago" : ""}</span>
+          <span class="pag-badge ${pagClass}">${pagLabel}</span>
+        </div>` : ""}
+
+        ${p.observacoes ? `<div class="obs-line"><b>Obs.:</b> ${escapeHtml(p.observacoes)}</div>` : ""}
       </div>
       <div class="card-footer">
         <div class="actions">
@@ -782,6 +894,23 @@
   // ---------- modal pedido ----------
   const overlay = document.getElementById("overlay");
   const form = document.getElementById("formPedido");
+
+  function dadosDoFormulario(){
+    return {
+      nomeFalecido: document.getElementById("nomeFalecido").value,
+      dataNascimento: document.getElementById("dataNascimento").value,
+      dataFalecimento: document.getElementById("dataFalecimento").value,
+      comFrase: form.querySelector('input[name=comFrase]:checked') ? form.querySelector('input[name=comFrase]:checked').value : "nao",
+      fraseTexto: document.getElementById("fraseTexto").value
+    };
+  }
+  function atualizarPreview(){
+    document.getElementById("placaPreviewWrap").innerHTML = gerarPlacaHtml(dadosDoFormulario(), false);
+  }
+  ["nomeFalecido","dataNascimento","dataFalecimento","fraseTexto"].forEach(id => {
+    document.getElementById(id).addEventListener("input", atualizarPreview);
+  });
+  form.querySelectorAll('input[name=comFrase]').forEach(r => r.addEventListener("change", atualizarPreview));
 
   function abrirModal(id){
     editandoId = id || null;
@@ -803,20 +932,20 @@
         document.getElementById("clienteEmail").value = p.clienteEmail || "";
         document.getElementById("clienteEndereco").value = p.clienteEndereco || "";
         document.getElementById("dataPedido").value = p.dataPedido;
-        document.getElementById("prazoDias").value = p.prazoDias;
         document.getElementById("status").value = p.status;
+        document.getElementById("valorCobrado").value = p.valorCobrado || "";
+        document.getElementById("valorPago").value = p.valorPago || "";
+        document.getElementById("statusPagamento").value = p.statusPagamento || "pendente";
         document.getElementById("observacoes").value = p.observacoes || "";
       }
     } else {
       document.getElementById("dataPedido").value = new Date().toISOString().slice(0,10);
+      document.getElementById("statusPagamento").value = "pendente";
     }
+    atualizarPreview();
     overlay.classList.add("open");
   }
-
-  function fecharModal(){
-    overlay.classList.remove("open");
-    editandoId = null;
-  }
+  function fecharModal(){ overlay.classList.remove("open"); editandoId = null; }
 
   document.getElementById("btnNovo").addEventListener("click", () => abrirModal(null));
   document.getElementById("modalClose").addEventListener("click", fecharModal);
@@ -829,11 +958,7 @@
       document.getElementById("formError").textContent = "Configure a API_URL no código antes de salvar.";
       return;
     }
-    const prazo = Number(document.getElementById("prazoDias").value);
-    if(prazo < 45 || prazo > 60){
-      document.getElementById("formError").textContent = "O prazo deve estar entre 45 e 60 dias.";
-      return;
-    }
+    const existente = editandoId ? pedidos.find(x => String(x.id) === String(editandoId)) : null;
     const dados = {
       id: editandoId || (Date.now().toString(36) + Math.random().toString(36).slice(2,7)),
       nomeFalecido: document.getElementById("nomeFalecido").value.trim(),
@@ -847,8 +972,11 @@
       clienteEmail: document.getElementById("clienteEmail").value.trim(),
       clienteEndereco: document.getElementById("clienteEndereco").value.trim(),
       dataPedido: document.getElementById("dataPedido").value,
-      prazoDias: prazo,
+      prazoDias: existente ? (existente.prazoDias || PRAZO_PADRAO_DIAS) : PRAZO_PADRAO_DIAS,
       status: document.getElementById("status").value,
+      valorCobrado: Number(document.getElementById("valorCobrado").value) || 0,
+      valorPago: Number(document.getElementById("valorPago").value) || 0,
+      statusPagamento: document.getElementById("statusPagamento").value,
       observacoes: document.getElementById("observacoes").value.trim()
     };
 
@@ -870,50 +998,6 @@
     }
   });
 
-  function viaHtml(p, rotulo){
-    const se = statusEfetivo(p);
-    const meta = STATUS_META[se];
-    const prazoData = addDias(p.dataPedido, p.prazoDias);
-    return `
-      <div class="via">
-        <div class="via-header">
-          <span class="via-tag">${rotulo}</span>
-          <span class="via-empresa">Controle de Pedidos — Placas</span>
-        </div>
-        <h3>${escapeHtml(p.nomeFalecido)}</h3>
-        <div class="sub">${fmtDate(p.dataNascimento)} — ${fmtDate(p.dataFalecimento)} &nbsp;•&nbsp; Pedido #${String(p.id).slice(-5)}</div>
-        <span class="via-status">${meta.label}</span>
-        ${p.comFrase === "sim" && p.fraseTexto ? `<div class="frase">&ldquo;${escapeHtml(p.fraseTexto)}&rdquo;</div>` : ""}
-        <div class="via-grid">
-          <div><b>Foto</b>${p.comFoto === "sim" ? "Com foto" : "Sem foto"}</div>
-          <div><b>Frase</b>${p.comFrase === "sim" ? "Com frase" : "Sem frase"}</div>
-          <div><b>Cliente</b>${escapeHtml(p.clienteNome || "—")}</div>
-          <div><b>Telefone</b>${escapeHtml(p.clienteTelefone || "—")}</div>
-          ${p.clienteEmail ? `<div><b>E-mail</b>${escapeHtml(p.clienteEmail)}</div>` : ""}
-          ${p.clienteEndereco ? `<div class="full"><b>Endereço</b>${escapeHtml(p.clienteEndereco)}</div>` : ""}
-          <div><b>Data do pedido</b>${fmtDate(p.dataPedido)}</div>
-          <div><b>Prazo</b>${p.prazoDias} dias (até ${prazoData ? prazoData.toLocaleDateString("pt-BR") : "—"})</div>
-        </div>
-        ${p.observacoes ? `<div class="via-obs"><b>Observações:</b> ${escapeHtml(p.observacoes)}</div>` : ""}
-        <div class="via-assinatura">
-          <div>Assinatura do cliente</div>
-          <div>Data de retirada / entrega</div>
-        </div>
-        <div class="via-disclaimer">${DISCLAIMER}</div>
-      </div>`;
-  }
-
-  function imprimirPedido(id){
-    const p = pedidos.find(x => String(x.id) === String(id));
-    if(!p) return;
-    const area = document.getElementById("printArea");
-    area.innerHTML =
-      viaHtml(p, "Via — Arquivo") +
-      `<div class="corte">Corte aqui</div>` +
-      viaHtml(p, "Via — Cliente");
-    window.print();
-  }
-
   async function excluirPedido(id){
     if(!confirm("Excluir este pedido? Esta ação não pode ser desfeita e vale para todos os colegas.")) return;
     try{
@@ -923,6 +1007,45 @@
     }catch(err){
       mostrarErro("Não foi possível excluir: " + err.message);
     }
+  }
+
+  // ---------- impressão (2 vias em A4) ----------
+  function viaHtml(p, rotulo){
+    const se = statusEfetivo(p);
+    const meta = STATUS_META[se];
+    return `
+      <div class="via">
+        <div class="via-header">
+          <span class="via-tag">${rotulo}</span>
+          <span class="via-empresa">Controle de Pedidos — Placas</span>
+        </div>
+        ${gerarPlacaHtml(p, true)}
+        <span class="via-status" style="display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;border:1px solid #000;border-radius:3px;padding:2px 8px;margin-top:6px;">${meta.label} · Pedido #${String(p.id).slice(-5)}</span>
+        <div class="cliente-section" style="margin-top:8px;">
+          <div class="cliente-label">Dados do cliente</div>
+          <div class="via-grid">
+            <div><b>Cliente</b>${escapeHtml(p.clienteNome || "—")}</div>
+            <div><b>Telefone</b>${escapeHtml(p.clienteTelefone || "—")}</div>
+            ${p.clienteEmail ? `<div><b>E-mail</b>${escapeHtml(p.clienteEmail)}</div>` : ""}
+            ${p.clienteEndereco ? `<div class="full"><b>Endereço</b>${escapeHtml(p.clienteEndereco)}</div>` : ""}
+            <div><b>Data do pedido</b>${fmtDate(p.dataPedido)}</div>
+            <div><b>Foto / Frase</b>${p.comFoto === "sim" ? "Com foto" : "Sem foto"} · ${p.comFrase === "sim" ? "Com frase" : "Sem frase"}</div>
+          </div>
+        </div>
+        ${p.observacoes ? `<div class="via-obs"><b>Observações:</b> ${escapeHtml(p.observacoes)}</div>` : ""}
+        <div class="via-assinatura">
+          <div>Assinatura do cliente</div>
+          <div>Data de retirada / entrega</div>
+        </div>
+        <div class="via-disclaimer">${DISCLAIMER}</div>
+      </div>`;
+  }
+  function imprimirPedido(id){
+    const p = pedidos.find(x => String(x.id) === String(id));
+    if(!p) return;
+    const area = document.getElementById("printArea");
+    area.innerHTML = viaHtml(p, "Via — Arquivo") + `<div class="corte">Corte aqui</div>` + viaHtml(p, "Via — Cliente");
+    window.print();
   }
 
   // ---------- filtros: eventos ----------
@@ -940,9 +1063,224 @@
     document.getElementById("fOrdenar").value = "data_desc";
     renderLista();
   });
-
   document.getElementById("btnAtualizar").addEventListener("click", () => carregarDados(false));
   document.getElementById("btnTentarNovamente").addEventListener("click", () => carregarDados(false));
+
+  // ======================================================================
+  // ADMINISTRADOR
+  // ======================================================================
+  const overlayLogin = document.getElementById("overlayLogin");
+  const formLogin = document.getElementById("formLogin");
+
+  function mostrarViewPedidos(){
+    viewAtual = "pedidos";
+    document.getElementById("viewPedidos").style.display = "block";
+    document.getElementById("viewAdmin").style.display = "none";
+    document.getElementById("navPedidos").classList.add("active");
+    document.getElementById("navAdmin").classList.remove("active");
+    document.getElementById("btnNovo").style.display = "inline-flex";
+    renderLista();
+  }
+  function mostrarViewAdmin(){
+    viewAtual = "admin";
+    document.getElementById("viewPedidos").style.display = "none";
+    document.getElementById("viewAdmin").style.display = "block";
+    document.getElementById("navPedidos").classList.remove("active");
+    document.getElementById("navAdmin").classList.add("active");
+    document.getElementById("btnNovo").style.display = "none";
+    renderAdmin();
+  }
+
+  document.getElementById("navPedidos").addEventListener("click", mostrarViewPedidos);
+  document.getElementById("navAdmin").addEventListener("click", () => {
+    if(adminLogado){ mostrarViewAdmin(); } else { document.getElementById("loginError").textContent = ""; overlayLogin.classList.add("open"); }
+  });
+  document.getElementById("modalLoginClose").addEventListener("click", () => overlayLogin.classList.remove("open"));
+  document.getElementById("btnCancelarLogin").addEventListener("click", () => overlayLogin.classList.remove("open"));
+  overlayLogin.addEventListener("click", (e) => { if(e.target === overlayLogin) overlayLogin.classList.remove("open"); });
+
+  formLogin.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+    const senha = document.getElementById("loginSenha").value;
+    if(email === ADMIN_EMAIL && senha === ADMIN_SENHA){
+      adminLogado = true;
+      sessionStorage.setItem("adminLogado", "1");
+      overlayLogin.classList.remove("open");
+      formLogin.reset();
+      mostrarViewAdmin();
+    } else {
+      document.getElementById("loginError").textContent = "E-mail ou senha inválidos.";
+    }
+  });
+
+  function sair(){
+    adminLogado = false;
+    sessionStorage.removeItem("adminLogado");
+    mostrarViewPedidos();
+  }
+
+  function pedidosAtivos(){ return pedidos.filter(p => p.status !== "entregue"); }
+
+  function prazosAVencer(diasJanela){
+    const hj = hoje();
+    return pedidosAtivos().filter(p => {
+      const d = prazoDe(p); if(!d) return false;
+      const diff = diasEntre(d, hj);
+      return diff >= 0 && diff <= diasJanela;
+    }).sort((a,b) => prazoDe(a) - prazoDe(b));
+  }
+  function prazosAtrasados(){
+    const hj = hoje();
+    return pedidosAtivos().filter(p => {
+      const d = prazoDe(p); if(!d) return false;
+      return diasEntre(hj, d) > 0;
+    }).sort((a,b) => diasEntre(hoje(), prazoDe(a)) < diasEntre(hoje(), prazoDe(b)) ? 1 : -1);
+  }
+
+  function pedidosPorMes(){
+    const map = {};
+    pedidos.forEach(p => {
+      if(!p.dataPedido) return;
+      const key = String(p.dataPedido).slice(0,7);
+      if(!/^\d{4}-\d{2}$/.test(key)) return;
+      map[key] = (map[key] || 0) + 1;
+    });
+    return Object.keys(map).sort().slice(-8).map(k => ({ chave:k, total: map[k] }));
+  }
+
+  function exportarCsv(){
+    const cols = ["id","nomeFalecido","dataNascimento","dataFalecimento","comFoto","comFrase","fraseTexto",
+      "clienteNome","clienteTelefone","clienteEmail","clienteEndereco","dataPedido","status",
+      "valorCobrado","valorPago","statusPagamento","observacoes"];
+    const escCsv = v => {
+      if(v === undefined || v === null) return "";
+      const s = String(v).replace(/"/g,'""');
+      return /[;"\n]/.test(s) ? `"${s}"` : s;
+    };
+    const linhas = [cols.join(";")].concat(pedidos.map(p => cols.map(c => escCsv(p[c])).join(";")));
+    const blob = new Blob(["\uFEFF" + linhas.join("\n")], {type:"text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "pedidos_placas_" + new Date().toISOString().slice(0,10) + ".csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function renderAdmin(){
+    const el = document.getElementById("viewAdmin");
+    const total = pedidos.length;
+    const counts = {recebido:0, producao:0, aprovacao:0, pronta:0, entregue:0, atrasado:0};
+    let comFoto = 0, comFrase = 0;
+    pedidos.forEach(p => {
+      counts[statusEfetivo(p)]++;
+      if(p.comFoto === "sim") comFoto++;
+      if(p.comFrase === "sim") comFrase++;
+    });
+    const totalCobrado = pedidos.reduce((s,p) => s + (Number(p.valorCobrado)||0), 0);
+    const totalPago = pedidos.reduce((s,p) => s + (Number(p.valorPago)||0), 0);
+    const totalPendente = totalCobrado - totalPago;
+
+    const aVencer = prazosAVencer(15);
+    const atrasados = prazosAtrasados();
+    const meses = pedidosPorMes();
+    const maxMes = Math.max(1, ...meses.map(m => m.total));
+
+    el.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+        <div>
+          <h2 class="serif" style="margin:0;font-size:22px;">Painel do administrador</h2>
+          <p style="margin:4px 0 0;color:var(--muted);font-size:13px;">Métricas, financeiro e prazos de todos os pedidos.</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-secondary" id="btnExportarCsv">Exportar planilha (CSV)</button>
+          <button class="btn btn-secondary" id="btnSairAdmin">Sair</button>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label">Total de pedidos</div><div class="kpi-value">${total}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Atrasados</div><div class="kpi-value" style="color:var(--st-atrasado);">${counts.atrasado}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Em produção</div><div class="kpi-value" style="color:var(--st-producao);">${counts.producao}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Entregues</div><div class="kpi-value" style="color:var(--st-entregue);">${counts.entregue}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Com foto</div><div class="kpi-value">${comFoto}</div><div class="kpi-sub">${total ? Math.round(comFoto/total*100) : 0}% dos pedidos</div></div>
+        <div class="kpi-card"><div class="kpi-label">Com frase</div><div class="kpi-value">${comFrase}</div><div class="kpi-sub">${total ? Math.round(comFrase/total*100) : 0}% dos pedidos</div></div>
+        <div class="kpi-card"><div class="kpi-label">Valor total previsto</div><div class="kpi-value">${fmtMoeda(totalCobrado)}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Recebido / pendente</div><div class="kpi-value" style="font-size:19px;">${fmtMoeda(totalPago)}</div><div class="kpi-sub">${fmtMoeda(totalPendente)} a receber</div></div>
+      </div>
+
+      <div class="admin-section">
+        <h3>Pedidos por mês</h3>
+        <div class="admin-sub">Volume de pedidos recebidos, últimos meses</div>
+        ${meses.length ? `
+        <div class="bar-chart">
+          ${meses.map(m => {
+            const d = parseDate(m.chave + "-01");
+            const label = d ? d.toLocaleDateString("pt-BR", {month:"short", year:"2-digit"}) : m.chave;
+            const alturaPct = Math.round((m.total / maxMes) * 100);
+            return `<div class="bar-col"><span class="bar-num">${m.total}</span><div class="bar" style="height:${Math.max(alturaPct,4)}%;"></div><span class="bar-label">${label}</span></div>`;
+          }).join("")}
+        </div>` : `<p class="hint">Ainda não há pedidos suficientes para gerar o gráfico.</p>`}
+      </div>
+
+      <div class="admin-section">
+        <h3>Prazos atrasados</h3>
+        <div class="admin-sub">Pedidos que já passaram do prazo estimado e ainda não foram entregues</div>
+        ${atrasados.length ? atrasados.map(p => {
+          const d = prazoDe(p);
+          const diasAtraso = d ? diasEntre(hoje(), d) : 0;
+          return `<div class="alert-row">
+            <div><div class="nome">${escapeHtml(p.nomeFalecido)}</div><div class="sub">${escapeHtml(p.clienteNome || "—")} · Pedido #${String(p.id).slice(-5)}</div></div>
+            <span class="alert-pill atraso">${diasAtraso} dia(s) em atraso</span>
+          </div>`;
+        }).join("") : `<p class="hint">Nenhum pedido em atraso no momento.</p>`}
+      </div>
+
+      <div class="admin-section">
+        <h3>Prazos a vencer</h3>
+        <div class="admin-sub">Pedidos com prazo estimado nos próximos 15 dias</div>
+        ${aVencer.length ? aVencer.map(p => {
+          const d = prazoDe(p);
+          const restantes = d ? diasEntre(d, hoje()) : 0;
+          return `<div class="alert-row">
+            <div><div class="nome">${escapeHtml(p.nomeFalecido)}</div><div class="sub">${escapeHtml(p.clienteNome || "—")} · até ${d ? d.toLocaleDateString("pt-BR") : "—"}</div></div>
+            <span class="alert-pill avencer">${restantes} dia(s) restante(s)</span>
+          </div>`;
+        }).join("") : `<p class="hint">Nenhum pedido com prazo próximo.</p>`}
+      </div>
+
+      <div class="admin-section">
+        <h3>Planilha completa</h3>
+        <div class="admin-sub">Todos os pedidos, todos os campos — use "Exportar planilha (CSV)" para abrir no Excel.</div>
+        <div class="table-wrap">
+          <table class="planilha">
+            <thead><tr>
+              <th>Falecido</th><th>Status</th><th>Data pedido</th><th>Cliente</th><th>Telefone</th>
+              <th>Foto</th><th>Frase</th><th>Cobrado</th><th>Pago</th><th>Pagamento</th>
+            </tr></thead>
+            <tbody>
+              ${pedidos.length ? pedidos.map(p => `
+                <tr>
+                  <td>${escapeHtml(p.nomeFalecido)}</td>
+                  <td>${STATUS_META[statusEfetivo(p)].label}</td>
+                  <td>${fmtDate(p.dataPedido)}</td>
+                  <td>${escapeHtml(p.clienteNome)}</td>
+                  <td>${escapeHtml(p.clienteTelefone || "—")}</td>
+                  <td>${p.comFoto === "sim" ? "Sim" : "Não"}</td>
+                  <td>${p.comFrase === "sim" ? "Sim" : "Não"}</td>
+                  <td>${fmtMoeda(p.valorCobrado)}</td>
+                  <td>${fmtMoeda(p.valorPago)}</td>
+                  <td>${({pendente:"Pendente",parcial:"Parcial",pago:"Pago"})[p.statusPagamento] || "Pendente"}</td>
+                </tr>`).join("") : `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px;">Nenhum pedido cadastrado</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("btnSairAdmin").addEventListener("click", sair);
+    document.getElementById("btnExportarCsv").addEventListener("click", exportarCsv);
+  }
 
   // ---------- init ----------
   carregarDados(false);
