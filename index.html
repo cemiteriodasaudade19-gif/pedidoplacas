@@ -237,6 +237,8 @@
     cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;color:var(--ink);
   }
   .icon-btn:hover{background:var(--surface-soft);}
+  .icon-btn--whats{background:#25D366;color:#fff;border-color:#1FAF56;}
+  .icon-btn--whats:hover{background:#1FAF56;}
   .disclaimer{
     font-size:10px;line-height:1.4;color:#9C9891;padding:10px 16px 14px;border-top:1px dashed var(--line);
   }
@@ -334,20 +336,26 @@
     body *{visibility:hidden;}
     .print-area, .print-area *{visibility:visible;}
     .print-area{display:block;position:absolute;top:0;left:0;width:100%;margin:0;padding:0;}
-    .via{height:128mm;box-sizing:border-box;padding:0 2mm 4mm;page-break-inside:avoid;font-family:'Inter',system-ui,sans-serif;color:#000;}
-    .via-header{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #000;padding-bottom:5px;margin-bottom:8px;}
+    .via{height:132mm;box-sizing:border-box;padding:0 2mm 3mm;page-break-inside:avoid;font-family:'Inter',system-ui,sans-serif;color:#000;}
+    .via-header{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #000;padding-bottom:4px;margin-bottom:7px;}
     .via-header .via-tag{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:1px solid #000;border-radius:3px;padding:2px 8px;}
     .via-header .via-empresa{font-family:'Source Serif 4',serif;font-weight:600;font-size:13px;}
-    .via .placa-mockup{margin-bottom:8px;}
-    .via .cliente-section{background:#f4f4f2;margin-top:8px;}
-    .via-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 18px;font-size:11px;margin-top:4px;}
+    /* placa da via em formato grande, bem destacada */
+    .via .placa-mockup{margin-bottom:0;padding:14px 16px;gap:14px;}
+    .via .placa-foto{width:72px;height:72px;}
+    .via .placa-data{font-size:12.5px;}
+    .via .placa-frase{font-size:11.5px;}
+    /* dados do cliente separados, em texto pequeno/normal */
+    .via .cliente-section.via-cliente-compacta{background:#f4f4f2;margin-top:8px;padding:8px 10px;}
+    .via .cliente-section.via-cliente-compacta .cliente-label{font-size:9.5px;margin-bottom:5px;}
+    .via-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px 16px;font-size:10px;margin-top:2px;}
     .via-grid .full{grid-column:1/-1;}
-    .via-grid b{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:#555;font-weight:600;}
-    .via-obs{font-size:10.5px;margin-top:6px;}
-    .via-disclaimer{font-size:8px;color:#444;margin-top:8px;line-height:1.4;}
-    .via-assinatura{margin-top:12px;display:flex;justify-content:space-between;gap:20px;font-size:10px;}
-    .via-assinatura div{flex:1;border-top:1px solid #000;padding-top:4px;text-align:center;}
-    .corte{display:flex;align-items:center;gap:10px;color:#777;font-size:9px;letter-spacing:.15em;text-transform:uppercase;margin:3mm 0;}
+    .via-grid b{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.04em;color:#555;font-weight:600;}
+    .via-obs{font-size:9.5px;margin-top:5px;}
+    .via-disclaimer{font-size:7.5px;color:#444;margin-top:6px;line-height:1.35;}
+    .via-assinatura{margin-top:10px;display:flex;justify-content:space-between;gap:20px;font-size:9.5px;}
+    .via-assinatura div{flex:1;border-top:1px solid #000;padding-top:3px;text-align:center;}
+    .corte{display:flex;align-items:center;gap:10px;color:#777;font-size:9px;letter-spacing:.15em;text-transform:uppercase;margin:2mm 0;}
     .corte::before, .corte::after{content:"";flex:1;border-top:1px dashed #777;}
   }
 </style>
@@ -601,7 +609,7 @@
    * (Extensões > Apps Script > Implantar > Nova implantação > App da Web).
    * A URL termina em /exec
    * ========================================================================= */
-  const API_URL = "https://script.google.com/macros/s/AKfycbwI9sELfh0y2RI9zjoY3G-rL6G5k8Yi3lqEbhu_cvLz1y7U9ra4uSciQMB_1jfCmY3oFQ/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbwNngSot1njUyQahI1-SQ717Ft54dxSZEHslaXS-7An7dtkIUpys7q88BZO5IC9MrXi3g/exec";
   const AUTO_REFRESH_MS = 20000; // atualiza automaticamente a cada 20s
   const PRAZO_PADRAO_DIAS = 45;  // usado internamente para alertas do administrador
 
@@ -841,6 +849,7 @@
 
     container.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => abrirModal(btn.getAttribute("data-edit"))));
     container.querySelectorAll("[data-print]").forEach(btn => btn.addEventListener("click", () => imprimirPedido(btn.getAttribute("data-print"))));
+    container.querySelectorAll("[data-whats]").forEach(btn => btn.addEventListener("click", () => abrirWhatsapp(btn.getAttribute("data-whats"))));
     container.querySelectorAll("[data-del]").forEach(btn => btn.addEventListener("click", () => excluirPedido(btn.getAttribute("data-del"))));
   }
 
@@ -884,6 +893,7 @@
         <div class="actions">
           <button class="icon-btn" data-edit="${p.id}">Editar</button>
           <button class="icon-btn" data-print="${p.id}">Imprimir</button>
+          <button class="icon-btn icon-btn--whats" data-whats="${p.id}">WhatsApp</button>
           <button class="icon-btn" data-del="${p.id}">Excluir</button>
         </div>
       </div>
@@ -1019,9 +1029,9 @@
           <span class="via-tag">${rotulo}</span>
           <span class="via-empresa">Controle de Pedidos — Placas</span>
         </div>
-        ${gerarPlacaHtml(p, true)}
-        <span class="via-status" style="display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;border:1px solid #000;border-radius:3px;padding:2px 8px;margin-top:6px;">${meta.label} · Pedido #${String(p.id).slice(-5)}</span>
-        <div class="cliente-section" style="margin-top:8px;">
+        ${gerarPlacaHtml(p, false)}
+        <span class="via-status" style="display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;border:1px solid #000;border-radius:3px;padding:2px 8px;margin-top:8px;">${meta.label} · Pedido #${String(p.id).slice(-5)}</span>
+        <div class="cliente-section via-cliente-compacta" style="margin-top:8px;">
           <div class="cliente-label">Dados do cliente</div>
           <div class="via-grid">
             <div><b>Cliente</b>${escapeHtml(p.clienteNome || "—")}</div>
@@ -1046,6 +1056,32 @@
     const area = document.getElementById("printArea");
     area.innerHTML = viaHtml(p, "Via — Arquivo") + `<div class="corte">Corte aqui</div>` + viaHtml(p, "Via — Cliente");
     window.print();
+  }
+
+  // ---------- WhatsApp: avisar cliente que a placa ficou pronta ----------
+  function formatarTelefoneWhatsapp(tel){
+    let digitos = String(tel || "").replace(/\D/g, "");
+    if(!digitos) return "";
+    if(digitos.length <= 11) digitos = "55" + digitos; // assume DDD + número, sem código do país
+    return digitos;
+  }
+  function mensagemPlacaPronta(p){
+    return "Olá, " + p.clienteNome + ", tudo bem?\n" +
+      "Gostaríamos de informar que a placa de homenagem/lápide em memória de " + p.nomeFalecido + " já está pronta!\n" +
+      "Você pode vir até a nossa administração de segunda a sexta feira das 8:00 as 11:00, ou das 14 as 16hs para fazer a retirada ou, caso prefira, podemos agendar a colagem/instalação no local.\n" +
+      "Por favor, nos avise como prefere proceder para alinharmos os detalhes!\n" +
+      "Atenciosamente,";
+  }
+  function abrirWhatsapp(id){
+    const p = pedidos.find(x => String(x.id) === String(id));
+    if(!p) return;
+    const numero = formatarTelefoneWhatsapp(p.clienteTelefone);
+    if(!numero){
+      alert("Este pedido não tem telefone cadastrado. Edite o pedido e adicione um telefone para enviar pelo WhatsApp.");
+      return;
+    }
+    const url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagemPlacaPronta(p));
+    window.open(url, "_blank");
   }
 
   // ---------- filtros: eventos ----------
