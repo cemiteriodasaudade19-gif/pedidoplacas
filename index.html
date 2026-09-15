@@ -286,7 +286,8 @@
   .kpi-card{
     background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;
   }
-  .kpi-card .kpi-label{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;margin-bottom:6px;}
+  .kpi-card .kpi-label{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+  .kpi-icone{width:16px;height:16px;flex:none;opacity:.85;}
   .kpi-card .kpi-value{font-family:'Source Serif 4',serif;font-size:26px;font-weight:600;}
   .kpi-card .kpi-sub{font-size:12px;color:var(--muted);margin-top:2px;}
 
@@ -357,6 +358,20 @@
     .via-assinatura div{flex:1;border-top:1px solid #000;padding-top:3px;text-align:center;}
     .corte{display:flex;align-items:center;gap:10px;color:#777;font-size:9px;letter-spacing:.15em;text-transform:uppercase;margin:2mm 0;}
     .corte::before, .corte::after{content:"";flex:1;border-top:1px dashed #777;}
+
+    /* ---------- relatório / lista impressos (Administrador e Pedidos) ---------- */
+    .relatorio-print{font-family:'Inter',system-ui,sans-serif;color:#000;}
+    .relatorio-header{border-bottom:3px solid #000;padding-bottom:8px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+    .relatorio-header h1{font-family:'Source Serif 4',serif;font-size:19px;margin:0;}
+    .relatorio-header div{font-size:10px;color:#555;}
+    .relatorio-print h2{font-family:'Source Serif 4',serif;font-size:14px;margin:18px 0 8px;border-bottom:1px solid #ccc;padding-bottom:4px;}
+    .relatorio-tabela{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:6px;}
+    .relatorio-tabela th, .relatorio-tabela td{border:1px solid #ccc;padding:5px 7px;text-align:left;}
+    .relatorio-tabela th{background:#f0f0f0;}
+    .relatorio-tabela-completa{font-size:9.5px;}
+    .relatorio-tabela tr{page-break-inside:avoid;}
+    .relatorio-filtros{font-size:11px;color:#444;margin:-6px 0 14px;}
+    .relatorio-rodape{font-size:10px;color:#777;margin-top:10px;}
   }
 </style>
 </head>
@@ -450,6 +465,7 @@
         </select>
       </div>
       <div class="filters-actions">
+        <button class="btn btn-secondary" id="btnImprimirLista" type="button">Imprimir lista</button>
         <button class="btn btn-secondary" id="btnLimparFiltros">Limpar filtros</button>
       </div>
     </div>
@@ -497,7 +513,7 @@
             <label><input type="radio" name="comFoto" value="sim"> Com foto</label>
             <label><input type="radio" name="comFoto" value="nao" checked> Sem foto</label>
           </div>
-          <p class="hint">O espaço da foto sempre aparece reservado na placa, mesmo quando não houver foto.</p>
+          <p class="hint">Com foto: o espaço da foto aparece na placa. Sem foto: o espaço some e o texto ocupa a largura toda.</p>
         </fieldset>
 
         <fieldset>
@@ -609,7 +625,7 @@
    * (Extensões > Apps Script > Implantar > Nova implantação > App da Web).
    * A URL termina em /exec
    * ========================================================================= */
-  const API_URL = "https://script.google.com/macros/s/AKfycbwNngSot1njUyQahI1-SQ717Ft54dxSZEHslaXS-7An7dtkIUpys7q88BZO5IC9MrXi3g/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbxn5eEQ_fhj6HD_p5-F0697s23N1qLxIG1wFMzuo3ZfdYL4uBosHKdchPaHQmf7SvyW9g/exec";
   const AUTO_REFRESH_MS = 20000; // atualiza automaticamente a cada 20s
   const PRAZO_PADRAO_DIAS = 45;  // usado internamente para alertas do administrador
 
@@ -628,6 +644,7 @@
   };
 
   let pedidos = [];
+  let config = {};
   let editandoId = null;
   let refreshTimer = null;
   let viewAtual = "pedidos"; // "pedidos" | "admin"
@@ -679,6 +696,7 @@
     try{
       const data = await apiGetDados();
       pedidos = data.pedidos || [];
+      config = data.config || {};
       esconderErro();
       setSyncStatus("ok", "Atualizado às " + new Date().toLocaleTimeString("pt-BR"));
       if(viewAtual === "admin") renderAdmin(); else renderLista();
@@ -735,6 +753,20 @@
   }
   function fmtMoeda(v){ return (Number(v)||0).toLocaleString("pt-BR", {style:"currency", currency:"BRL"}); }
 
+  function iconeSvg(nome){
+    const icones = {
+      total: '<path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/>',
+      alerta: '<path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17h.01"/>',
+      relogio: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
+      check: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
+      camera: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+      aspas: '<path d="M7 8c-2 1-3 3-3 5.5S6 18 8 18M15 8c-2 1-3 3-3 5.5s2 4.5 4 4.5"/>',
+      dinheiro: '<circle cx="12" cy="12" r="9"/><path d="M9 9.5c0-1 1-1.5 3-1.5s3 .5 3 1.5-1 1.5-3 1.5-3 .5-3 1.5 1 1.5 3 1.5 3-.5 3-1.5M12 6v1.5M12 16.5V18"/>',
+      cofre: '<rect x="4" y="6" width="16" height="13" rx="1.5"/><circle cx="12" cy="12.5" r="2.6"/><path d="M8 6V4h8v2"/>'
+    };
+    return `<svg viewBox="0 0 24 24" class="kpi-icone" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${icones[nome] || ""}</svg>`;
+  }
+
   function escapeHtml(str){
     const div = document.createElement("div");
     div.textContent = str == null ? "" : str;
@@ -757,12 +789,14 @@
     const nasc = p.dataNascimento ? fmtDate(p.dataNascimento) : "00/00/0000";
     const falec = p.dataFalecimento ? fmtDate(p.dataFalecimento) : "00/00/0000";
     const temFrase = p.comFrase === "sim" && p.fraseTexto && p.fraseTexto.trim();
+    const temFoto = p.comFoto === "sim";
     const baseFonte = compacta ? 17 : 27;
     return `
       <div class="placa-mockup${compacta ? " placa-mockup--compacta" : ""}">
+        ${temFoto ? `
         <div class="placa-foto" aria-hidden="true">
           <svg viewBox="0 0 44 44" class="placa-foto-icone"><circle cx="22" cy="16" r="9"/><path d="M4 40c0-10 8-16 18-16s18 6 18 16"/></svg>
-        </div>
+        </div>` : ""}
         <div class="placa-texto">
           <div class="placa-nome" style="font-size:${fontSizeParaNome(nome, baseFonte)}">${escapeHtml(nome)}</div>
           <div class="placa-data"><span class="placa-ico">&#9733;</span>${nasc}</div>
@@ -910,6 +944,7 @@
       nomeFalecido: document.getElementById("nomeFalecido").value,
       dataNascimento: document.getElementById("dataNascimento").value,
       dataFalecimento: document.getElementById("dataFalecimento").value,
+      comFoto: form.querySelector('input[name=comFoto]:checked') ? form.querySelector('input[name=comFoto]:checked').value : "nao",
       comFrase: form.querySelector('input[name=comFrase]:checked') ? form.querySelector('input[name=comFrase]:checked').value : "nao",
       fraseTexto: document.getElementById("fraseTexto").value
     };
@@ -921,6 +956,7 @@
     document.getElementById(id).addEventListener("input", atualizarPreview);
   });
   form.querySelectorAll('input[name=comFrase]').forEach(r => r.addEventListener("change", atualizarPreview));
+  form.querySelectorAll('input[name=comFoto]').forEach(r => r.addEventListener("change", atualizarPreview));
 
   function abrirModal(id){
     editandoId = id || null;
@@ -1072,16 +1108,29 @@
       "Por favor, nos avise como prefere proceder para alinharmos os detalhes!\n" +
       "Atenciosamente,";
   }
-  function abrirWhatsapp(id){
-    const p = pedidos.find(x => String(x.id) === String(id));
-    if(!p) return;
+  function mensagemLembretePrazo(p, diasInfo){
+    return "Olá, " + p.clienteNome + ", tudo bem?\n" +
+      "Estamos entrando em contato sobre o pedido da placa em memória de " + p.nomeFalecido + ". " + diasInfo + "\n" +
+      "Gostaríamos de alinhar os detalhes de entrega/instalação. Qualquer dúvida, estamos à disposição!\n" +
+      "Atenciosamente,";
+  }
+  function abrirWhatsappComMensagem(p, mensagem){
     const numero = formatarTelefoneWhatsapp(p.clienteTelefone);
     if(!numero){
       alert("Este pedido não tem telefone cadastrado. Edite o pedido e adicione um telefone para enviar pelo WhatsApp.");
       return;
     }
-    const url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagemPlacaPronta(p));
-    window.open(url, "_blank");
+    window.open("https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem), "_blank");
+  }
+  function abrirWhatsapp(id){
+    const p = pedidos.find(x => String(x.id) === String(id));
+    if(!p) return;
+    abrirWhatsappComMensagem(p, mensagemPlacaPronta(p));
+  }
+  function abrirWhatsappLembrete(id, diasInfo){
+    const p = pedidos.find(x => String(x.id) === String(id));
+    if(!p) return;
+    abrirWhatsappComMensagem(p, mensagemLembretePrazo(p, diasInfo || ""));
   }
 
   // ---------- filtros: eventos ----------
@@ -1101,6 +1150,59 @@
   });
   document.getElementById("btnAtualizar").addEventListener("click", () => carregarDados(false));
   document.getElementById("btnTentarNovamente").addEventListener("click", () => carregarDados(false));
+
+  function resumoFiltrosAtivos(){
+    const partes = [];
+    const busca = document.getElementById("fBusca").value.trim();
+    const st = document.getElementById("fStatus").value;
+    const foto = document.getElementById("fFoto").value;
+    const frase = document.getElementById("fFrase").value;
+    const de = document.getElementById("fDataDe").value;
+    const ate = document.getElementById("fDataAte").value;
+    if(busca) partes.push('Busca: "' + busca + '"');
+    if(st) partes.push("Status: " + STATUS_META[st].label);
+    if(foto) partes.push(foto === "sim" ? "Com foto" : "Sem foto");
+    if(frase) partes.push(frase === "sim" ? "Com frase" : "Sem frase");
+    if(de) partes.push("De: " + fmtDate(de));
+    if(ate) partes.push("Até: " + fmtDate(ate));
+    return partes.length ? partes.join(" · ") : "Nenhum filtro aplicado (todos os pedidos)";
+  }
+
+  function linhaTabelaPedido(p){
+    return `<tr>
+      <td>${escapeHtml(p.nomeFalecido)}</td>
+      <td>${STATUS_META[statusEfetivo(p)].label}</td>
+      <td>${fmtDate(p.dataPedido)}</td>
+      <td>${escapeHtml(p.clienteNome)}</td>
+      <td>${escapeHtml(p.clienteTelefone || "—")}</td>
+      <td>${p.comFoto === "sim" ? "Sim" : "Não"}</td>
+      <td>${p.comFrase === "sim" ? "Sim" : "Não"}</td>
+      <td>${fmtMoeda(p.valorCobrado)}</td>
+      <td>${fmtMoeda(p.valorPago)}</td>
+      <td>${({pendente:"Pendente",parcial:"Parcial",pago:"Pago"})[p.statusPagamento] || "Pendente"}</td>
+    </tr>`;
+  }
+  const CABECALHO_TABELA_PEDIDOS = `<tr><th>Falecido</th><th>Status</th><th>Data pedido</th><th>Cliente</th><th>Telefone</th><th>Foto</th><th>Frase</th><th>Cobrado</th><th>Pago</th><th>Pagamento</th></tr>`;
+
+  function imprimirListaFiltrada(){
+    const lista = pedidosFiltrados();
+    const html = `
+      <div class="relatorio-print">
+        <div class="relatorio-header">
+          <h1>Lista de Pedidos — Controle de Placas</h1>
+          <div>Gerado em ${new Date().toLocaleString("pt-BR")}</div>
+        </div>
+        <p class="relatorio-filtros"><b>Filtros aplicados:</b> ${escapeHtml(resumoFiltrosAtivos())}</p>
+        <table class="relatorio-tabela relatorio-tabela-completa">
+          ${CABECALHO_TABELA_PEDIDOS}
+          ${lista.map(linhaTabelaPedido).join("")}
+        </table>
+        <p class="relatorio-rodape">${lista.length} pedido(s) nesta lista.</p>
+      </div>`;
+    document.getElementById("printArea").innerHTML = html;
+    window.print();
+  }
+  document.getElementById("btnImprimirLista").addEventListener("click", imprimirListaFiltrada);
 
   // ======================================================================
   // ADMINISTRADOR
@@ -1203,6 +1305,93 @@
     URL.revokeObjectURL(url);
   }
 
+  function imprimirRelatorio(){
+    const total = pedidos.length;
+    const counts = {recebido:0, producao:0, aprovacao:0, pronta:0, entregue:0, atrasado:0};
+    pedidos.forEach(p => counts[statusEfetivo(p)]++);
+    const totalCobrado = pedidos.reduce((s,p) => s + (Number(p.valorCobrado)||0), 0);
+    const totalPago = pedidos.reduce((s,p) => s + (Number(p.valorPago)||0), 0);
+    const aVencer = prazosAVencer(15);
+    const atrasados = prazosAtrasados();
+    const meses = pedidosPorMes();
+    const linha = (label, val) => `<tr><td>${label}</td><td>${val}</td></tr>`;
+
+    const html = `
+      <div class="relatorio-print">
+        <div class="relatorio-header">
+          <h1>Relatório — Controle de Pedidos de Placas</h1>
+          <div>Gerado em ${new Date().toLocaleString("pt-BR")}</div>
+        </div>
+
+        <h2>Resumo geral</h2>
+        <table class="relatorio-tabela">
+          ${linha("Total de pedidos", total)}
+          ${linha("Recebido", counts.recebido)}
+          ${linha("Em produção", counts.producao)}
+          ${linha("Aguardando aprovação", counts.aprovacao)}
+          ${linha("Pronta", counts.pronta)}
+          ${linha("Entregue", counts.entregue)}
+          ${linha("Atrasado", counts.atrasado)}
+        </table>
+
+        <h2>Financeiro</h2>
+        <table class="relatorio-tabela">
+          ${linha("Valor total previsto", fmtMoeda(totalCobrado))}
+          ${linha("Valor recebido", fmtMoeda(totalPago))}
+          ${linha("Valor pendente", fmtMoeda(totalCobrado - totalPago))}
+        </table>
+
+        <h2>Pedidos por mês</h2>
+        <table class="relatorio-tabela">
+          <tr><th>Mês</th><th>Pedidos</th></tr>
+          ${meses.map(m => {
+            const d = parseDate(m.chave + "-01");
+            const label = d ? d.toLocaleDateString("pt-BR", {month:"long", year:"numeric"}) : m.chave;
+            return `<tr><td>${label}</td><td>${m.total}</td></tr>`;
+          }).join("")}
+        </table>
+
+        <h2>Prazos atrasados (${atrasados.length})</h2>
+        ${atrasados.length ? `<table class="relatorio-tabela"><tr><th>Falecido</th><th>Cliente</th><th>Dias em atraso</th></tr>
+        ${atrasados.map(p => { const d = prazoDe(p); const dias = d ? diasEntre(hoje(), d) : 0;
+          return `<tr><td>${escapeHtml(p.nomeFalecido)}</td><td>${escapeHtml(p.clienteNome || "—")}</td><td>${dias}</td></tr>`; }).join("")}
+        </table>` : `<p>Nenhum pedido em atraso.</p>`}
+
+        <h2>Prazos a vencer nos próximos 15 dias (${aVencer.length})</h2>
+        ${aVencer.length ? `<table class="relatorio-tabela"><tr><th>Falecido</th><th>Cliente</th><th>Vence em</th></tr>
+        ${aVencer.map(p => { const d = prazoDe(p); const dias = d ? diasEntre(d, hoje()) : 0;
+          return `<tr><td>${escapeHtml(p.nomeFalecido)}</td><td>${escapeHtml(p.clienteNome || "—")}</td><td>${dias} dia(s)</td></tr>`; }).join("")}
+        </table>` : `<p>Nenhum pedido com prazo próximo.</p>`}
+
+        <h2>Planilha completa (${pedidos.length})</h2>
+        <table class="relatorio-tabela relatorio-tabela-completa">
+          ${CABECALHO_TABELA_PEDIDOS}
+          ${pedidos.map(linhaTabelaPedido).join("")}
+        </table>
+      </div>`;
+    document.getElementById("printArea").innerHTML = html;
+    window.print();
+  }
+
+  async function salvarConfigLembrete(){
+    const email = document.getElementById("configEmailLembrete").value.trim();
+    const btn = document.getElementById("btnSalvarConfig");
+    const msg = document.getElementById("configSalvoMsg");
+    btn.disabled = true; btn.textContent = "Salvando...";
+    try{
+      const data = await apiPost({ action: "salvarConfig", config: { emailLembrete: email } });
+      pedidos = data.pedidos || pedidos;
+      config = data.config || config;
+      msg.style.display = "block";
+      msg.textContent = email ? "E-mail salvo! Não esqueça de rodar configurarLembretes() no Apps Script (uma vez só)." : "E-mail removido — os lembretes automáticos ficam desativados.";
+      setTimeout(() => { msg.style.display = "none"; }, 6000);
+    }catch(err){
+      mostrarErro("Não foi possível salvar a configuração: " + err.message);
+    }finally{
+      btn.disabled = false; btn.textContent = "Salvar";
+    }
+  }
+
   function renderAdmin(){
     const el = document.getElementById("viewAdmin");
     const total = pedidos.length;
@@ -1228,21 +1417,22 @@
           <h2 class="serif" style="margin:0;font-size:22px;">Painel do administrador</h2>
           <p style="margin:4px 0 0;color:var(--muted);font-size:13px;">Métricas, financeiro e prazos de todos os pedidos.</p>
         </div>
-        <div style="display:flex;gap:10px;">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-secondary" id="btnImprimirRelatorio">Imprimir relatório</button>
           <button class="btn btn-secondary" id="btnExportarCsv">Exportar planilha (CSV)</button>
           <button class="btn btn-secondary" id="btnSairAdmin">Sair</button>
         </div>
       </div>
 
       <div class="kpi-grid">
-        <div class="kpi-card"><div class="kpi-label">Total de pedidos</div><div class="kpi-value">${total}</div></div>
-        <div class="kpi-card"><div class="kpi-label">Atrasados</div><div class="kpi-value" style="color:var(--st-atrasado);">${counts.atrasado}</div></div>
-        <div class="kpi-card"><div class="kpi-label">Em produção</div><div class="kpi-value" style="color:var(--st-producao);">${counts.producao}</div></div>
-        <div class="kpi-card"><div class="kpi-label">Entregues</div><div class="kpi-value" style="color:var(--st-entregue);">${counts.entregue}</div></div>
-        <div class="kpi-card"><div class="kpi-label">Com foto</div><div class="kpi-value">${comFoto}</div><div class="kpi-sub">${total ? Math.round(comFoto/total*100) : 0}% dos pedidos</div></div>
-        <div class="kpi-card"><div class="kpi-label">Com frase</div><div class="kpi-value">${comFrase}</div><div class="kpi-sub">${total ? Math.round(comFrase/total*100) : 0}% dos pedidos</div></div>
-        <div class="kpi-card"><div class="kpi-label">Valor total previsto</div><div class="kpi-value">${fmtMoeda(totalCobrado)}</div></div>
-        <div class="kpi-card"><div class="kpi-label">Recebido / pendente</div><div class="kpi-value" style="font-size:19px;">${fmtMoeda(totalPago)}</div><div class="kpi-sub">${fmtMoeda(totalPendente)} a receber</div></div>
+        <div class="kpi-card"><div class="kpi-label">${iconeSvg("total")}Total de pedidos</div><div class="kpi-value">${total}</div></div>
+        <div class="kpi-card"><div class="kpi-label" style="color:var(--st-atrasado);">${iconeSvg("alerta")}Atrasados</div><div class="kpi-value" style="color:var(--st-atrasado);">${counts.atrasado}</div></div>
+        <div class="kpi-card"><div class="kpi-label" style="color:var(--st-producao);">${iconeSvg("relogio")}Em produção</div><div class="kpi-value" style="color:var(--st-producao);">${counts.producao}</div></div>
+        <div class="kpi-card"><div class="kpi-label" style="color:var(--st-entregue);">${iconeSvg("check")}Entregues</div><div class="kpi-value" style="color:var(--st-entregue);">${counts.entregue}</div></div>
+        <div class="kpi-card"><div class="kpi-label">${iconeSvg("camera")}Com foto</div><div class="kpi-value">${comFoto}</div><div class="kpi-sub">${total ? Math.round(comFoto/total*100) : 0}% dos pedidos</div></div>
+        <div class="kpi-card"><div class="kpi-label">${iconeSvg("aspas")}Com frase</div><div class="kpi-value">${comFrase}</div><div class="kpi-sub">${total ? Math.round(comFrase/total*100) : 0}% dos pedidos</div></div>
+        <div class="kpi-card"><div class="kpi-label">${iconeSvg("dinheiro")}Valor total previsto</div><div class="kpi-value">${fmtMoeda(totalCobrado)}</div></div>
+        <div class="kpi-card"><div class="kpi-label">${iconeSvg("cofre")}Recebido / pendente</div><div class="kpi-value" style="font-size:19px;">${fmtMoeda(totalPago)}</div><div class="kpi-sub">${fmtMoeda(totalPendente)} a receber</div></div>
       </div>
 
       <div class="admin-section">
@@ -1260,14 +1450,31 @@
       </div>
 
       <div class="admin-section">
+        <h3>Lembretes automáticos por e-mail</h3>
+        <div class="admin-sub">Cadastre um e-mail para receber avisos automáticos: todo dia (pedidos vencendo hoje e atrasados) e toda segunda-feira (resumo semanal). WhatsApp automático não é possível de graça — mas cada alerta abaixo tem um botão para enviar manualmente em 1 clique.</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;max-width:520px;">
+          <div class="field" style="flex:1;min-width:220px;">
+            <label for="configEmailLembrete">E-mail para lembretes</label>
+            <input type="email" id="configEmailLembrete" placeholder="seuemail@exemplo.com" value="${escapeHtml(config.emailLembrete || "")}">
+          </div>
+          <button class="btn btn-secondary" id="btnSalvarConfig" type="button">Salvar</button>
+        </div>
+        <p class="hint" id="configSalvoMsg" style="display:none;margin-top:8px;"></p>
+      </div>
+
+      <div class="admin-section">
         <h3>Prazos atrasados</h3>
         <div class="admin-sub">Pedidos que já passaram do prazo estimado e ainda não foram entregues</div>
         ${atrasados.length ? atrasados.map(p => {
           const d = prazoDe(p);
           const diasAtraso = d ? diasEntre(hoje(), d) : 0;
+          const info = `Está ${diasAtraso} dia(s) além do prazo previsto.`;
           return `<div class="alert-row">
             <div><div class="nome">${escapeHtml(p.nomeFalecido)}</div><div class="sub">${escapeHtml(p.clienteNome || "—")} · Pedido #${String(p.id).slice(-5)}</div></div>
-            <span class="alert-pill atraso">${diasAtraso} dia(s) em atraso</span>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="alert-pill atraso">${diasAtraso} dia(s) em atraso</span>
+              <button class="icon-btn icon-btn--whats" data-whats-lembrete="${p.id}" data-dias-info="${escapeHtml(info)}">WhatsApp</button>
+            </div>
           </div>`;
         }).join("") : `<p class="hint">Nenhum pedido em atraso no momento.</p>`}
       </div>
@@ -1278,16 +1485,20 @@
         ${aVencer.length ? aVencer.map(p => {
           const d = prazoDe(p);
           const restantes = d ? diasEntre(d, hoje()) : 0;
+          const info = `O prazo previsto vence em ${restantes} dia(s).`;
           return `<div class="alert-row">
             <div><div class="nome">${escapeHtml(p.nomeFalecido)}</div><div class="sub">${escapeHtml(p.clienteNome || "—")} · até ${d ? d.toLocaleDateString("pt-BR") : "—"}</div></div>
-            <span class="alert-pill avencer">${restantes} dia(s) restante(s)</span>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="alert-pill avencer">${restantes} dia(s) restante(s)</span>
+              <button class="icon-btn icon-btn--whats" data-whats-lembrete="${p.id}" data-dias-info="${escapeHtml(info)}">WhatsApp</button>
+            </div>
           </div>`;
         }).join("") : `<p class="hint">Nenhum pedido com prazo próximo.</p>`}
       </div>
 
       <div class="admin-section">
         <h3>Planilha completa</h3>
-        <div class="admin-sub">Todos os pedidos, todos os campos — use "Exportar planilha (CSV)" para abrir no Excel.</div>
+        <div class="admin-sub">Todos os pedidos, todos os campos — use "Exportar planilha (CSV)" para abrir no Excel, ou "Imprimir relatório" para uma versão em papel.</div>
         <div class="table-wrap">
           <table class="planilha">
             <thead><tr>
@@ -1316,6 +1527,11 @@
 
     document.getElementById("btnSairAdmin").addEventListener("click", sair);
     document.getElementById("btnExportarCsv").addEventListener("click", exportarCsv);
+    document.getElementById("btnImprimirRelatorio").addEventListener("click", imprimirRelatorio);
+    document.getElementById("btnSalvarConfig").addEventListener("click", salvarConfigLembrete);
+    el.querySelectorAll("[data-whats-lembrete]").forEach(btn => {
+      btn.addEventListener("click", () => abrirWhatsappLembrete(btn.getAttribute("data-whats-lembrete"), btn.getAttribute("data-dias-info")));
+    });
   }
 
   // ---------- init ----------
