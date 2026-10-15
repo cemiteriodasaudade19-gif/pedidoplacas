@@ -1,376 +1,1544 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Controle de Pedidos — Placas de Sepultamento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f4f1ec;--card:#fff;--ink:#23262b;--mut:#6b7078;--line:#e3ded6;--pri:#2f4a3f;--pri2:#e9efec;--ok:#2e7d4f;--warn:#b7791f;--bad:#b83b3b;--r:10px}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
-header{background:var(--pri);color:#fff;padding:14px 20px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
-header h1{font-size:18px;margin:0;font-weight:600}
-header small{opacity:.8;display:block;font-size:12px}
-header .sp{flex:1}
-main{max-width:1100px;margin:0 auto;padding:16px}
-button{font:inherit;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);padding:8px 14px;border-radius:8px}
-button:hover{background:var(--pri2)}
-button.pri{background:var(--pri);color:#fff;border-color:var(--pri)}
-button.pri:hover{background:#243a31}
-header button{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)}
-header button.pri{background:#fff;color:var(--pri)}
-button.sm{padding:4px 10px;font-size:13px}
-button.del{color:var(--bad)}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px}
-.stat b{display:block;font-size:20px}.stat span{font-size:12px;color:var(--mut)}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-input,select,textarea{font:inherit;padding:8px 10px;border:1px solid #cfc9bf;border-radius:8px;background:#fff;width:100%}
-.filters input,.filters select{width:auto;flex:1;min-width:140px}
-.filters input[type=search]{flex:2;min-width:200px}
-.order{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:10px;display:grid;grid-template-columns:1.2fr 1.2fr 1fr auto;gap:14px;padding:12px 14px;align-items:center}
-.order h3{margin:0 0 2px;font-size:16px}
-.lbl{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut)}
-.mut{color:var(--mut);font-size:13px}
-.badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;background:#eee}
-.s0{background:#e8ecf3;color:#32486e}.s1{background:#fdf1d9;color:#8a5a0a}.s2{background:#f3e6f6;color:#6b3a7a}.s3{background:#dcf1e4;color:#1f6a40}.s4{background:#e4e4e4;color:#444}
-.p-Pago{background:#dcf1e4;color:#1f6a40}.p-Parcial{background:#fdf1d9;color:#8a5a0a}.p-Pendente{background:#f8dede;color:#9a2c2c}
-.late{background:#f8dede;color:#9a2c2c}
-.money{font-size:13px;line-height:1.5}
-.money b{font-size:15px}
-.empty{text-align:center;color:var(--mut);padding:40px}
-dialog{border:none;border-radius:14px;padding:0;width:min(760px,96vw);max-height:94vh;box-shadow:0 10px 40px rgba(0,0,0,.3)}
-dialog::backdrop{background:rgba(0,0,0,.45)}
-.dh{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:2}
-.dh h2{margin:0;font-size:17px}
-.db{padding:16px 18px}
-.df{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;position:sticky;bottom:0;background:#fff}
-fieldset{border:1px solid var(--line);border-radius:var(--r);margin:0 0 14px;padding:12px 14px}
-fieldset.cli{border-color:var(--pri);background:#f7faf8}
-fieldset.pag{border-color:#b7791f;background:#fffaf0}
-legend{font-weight:700;padding:0 6px;font-size:14px}
-.g{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.g .full{grid-column:1/-1}
-label{font-size:12px;color:var(--mut);display:block;margin-bottom:3px}
-.pr{display:grid;grid-template-columns:1fr 1.2fr 1fr auto;gap:6px;margin-bottom:6px;align-items:center}
-.tot{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px;font-size:14px}
-.hist{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
-.hist li{padding:0 0 10px 14px;position:relative;font-size:14px}
-.hist li:before{content:"";position:absolute;left:-6px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--pri)}
-.hist time{display:block;font-size:12px;color:var(--mut)}
-.info{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 16px}
-.info div b{display:block;font-size:15px}
-.tip{background:var(--pri2);border-radius:8px;padding:10px 12px;font-size:13px;margin-bottom:10px}
-#ficha,#lista{display:none}
-@media(max-width:700px){.order{grid-template-columns:1fr}.g{grid-template-columns:1fr}.pr{grid-template-columns:1fr 1fr}.info{grid-template-columns:1fr}}
+  :root{
+    --bg:#EDEBE6;
+    --surface:#FFFFFF;
+    --surface-soft:#F6F4F0;
+    --ink:#2A2A28;
+    --muted:#6B6963;
+    --line:#DCD8CF;
+    --bronze:#8C6A4E;
+    --bronze-dark:#6E5238;
+    --patina:#5E7267;
 
-/* ===== IMPRESSÃO ===== */
-@page{size:A4;margin:10mm}
-@media print{
-  body{background:#fff;font-size:11px}
-  header,main,dialog{display:none!important}
-  body[data-p=ficha] #ficha{display:block}
-  body[data-p=lista] #lista{display:block}
-  #ficha{font-size:11px;color:#000}
-  .fh{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #000;padding-bottom:6px;margin-bottom:8px}
-  .fh h1{font-size:16px;margin:0}.fh small{font-size:10px}
-  .fb{border:1.5px solid #000;border-radius:4px;margin-bottom:7px;break-inside:avoid}
-  .fb h2{margin:0;padding:3px 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:#222;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .fb .c{padding:6px 8px;display:grid;grid-template-columns:1fr 1fr;gap:4px 14px}
-  .fb .c .w{grid-column:1/-1}
-  .fb .k{font-size:9px;text-transform:uppercase;color:#444;display:block}
-  .fb .v{font-size:13px;font-weight:700}
-  .fb.big .v{font-size:15px}
-  #ficha table,#lista table{width:100%;border-collapse:collapse;font-size:11px}
-  #ficha th,#ficha td,#lista th,#lista td{border:1px solid #777;padding:2px 5px;text-align:left}
-  #ficha th,#lista th{background:#ddd;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .sg{display:flex;gap:30px;margin-top:22px}
-  .sg div{flex:1;border-top:1px solid #000;text-align:center;font-size:10px;padding-top:2px}
-  #lista h1{font-size:15px;margin:0 0 6px}
-  #lista td,#lista th{font-size:10px}
-  .r{text-align:right!important}
-}
+    --st-recebido:#4A6FA5;
+    --st-recebido-bg:#E9EFF7;
+    --st-producao:#B98134;
+    --st-producao-bg:#FBF0DF;
+    --st-aprovacao:#7C5AA6;
+    --st-aprovacao-bg:#F1EAF7;
+    --st-pronta:#4C8060;
+    --st-pronta-bg:#E7F1EB;
+    --st-entregue:#6E6B65;
+    --st-entregue-bg:#EDECE9;
+    --st-atrasado:#B23A3A;
+    --st-atrasado-bg:#F9E7E7;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  h1,h2,h3,.serif{font-family:'Source Serif 4', Georgia, serif;}
+
+  /* ---------- topbar ---------- */
+  .topbar{
+    background:linear-gradient(180deg,#2E2C29,#26241F);
+    color:#EFEAE0;
+    padding:18px 32px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    border-bottom:3px solid var(--bronze);
+    flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:14px;}
+  .brand .plate{
+    width:40px;height:40px;border-radius:6px;
+    background:linear-gradient(135deg,#9C7A56,#6E5238);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);
+    flex:none;
+  }
+  .brand .plate span{
+    font-family:'Source Serif 4',serif;font-weight:600;color:#F4EEE2;font-size:18px;
+  }
+  .brand h1{margin:0;font-size:20px;font-weight:600;letter-spacing:.2px;}
+  .brand p{margin:2px 0 0;font-size:12px;color:#C9C2B2;font-weight:400;font-family:'Inter',sans-serif;}
+
+  .nav-toggle{
+    display:flex;background:rgba(0,0,0,.25);border-radius:999px;padding:3px;gap:2px;
+  }
+  .nav-toggle button{
+    border:none;background:transparent;color:#C9C2B2;font-family:'Inter',sans-serif;
+    font-size:13px;font-weight:600;padding:8px 16px;border-radius:999px;cursor:pointer;
+  }
+  .nav-toggle button.active{background:var(--bronze);color:#fff;}
+
+  .sync-status{
+    display:flex;align-items:center;gap:8px;font-size:12px;color:#C9C2B2;
+    border:1px solid rgba(239,234,224,.25);border-radius:999px;padding:6px 12px;
+  }
+  .sync-dot{width:8px;height:8px;border-radius:50%;background:#7FB68A;flex:none;}
+  .sync-dot.loading{background:#D9B26B;animation:pulse 1s infinite ease-in-out;}
+  .sync-dot.error{background:#D07A7A;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+  .btn{
+    border:none;border-radius:7px;padding:11px 18px;font-family:'Inter',sans-serif;
+    font-size:14px;font-weight:600;cursor:pointer;transition:transform .12s ease, opacity .12s ease;
+    display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn:disabled{opacity:.55;cursor:not-allowed;}
+  .btn-primary{background:var(--bronze);color:#fff;}
+  .btn-primary:hover{background:var(--bronze-dark);}
+  .btn-ghost{background:transparent;color:#EFEAE0;border:1px solid rgba(239,234,224,.35);}
+  .btn-ghost:hover{background:rgba(239,234,224,.08);}
+  .btn-secondary{background:var(--surface);color:var(--ink);border:1px solid var(--line);}
+  .btn-secondary:hover{background:var(--surface-soft);}
+  .btn-danger{background:#fff;color:var(--st-atrasado);border:1px solid #E4BABA;}
+  .btn-danger:hover{background:var(--st-atrasado-bg);}
+
+  /* ---------- layout ---------- */
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 24px 80px;}
+
+  .setup-banner{
+    background:#FBF0DF;border:1px solid #E7CFA1;border-radius:12px;
+    padding:18px 20px;margin-bottom:24px;font-size:14px;line-height:1.6;
+  }
+  .setup-banner h3{margin:0 0 6px;font-size:15.5px;color:var(--bronze-dark);}
+  .setup-banner code{background:#fff;padding:1px 6px;border-radius:4px;font-size:12.5px;border:1px solid #E7CFA1;}
+
+  .error-banner{
+    background:var(--st-atrasado-bg);border:1px solid #E4BABA;color:var(--st-atrasado);
+    border-radius:12px;padding:14px 18px;margin-bottom:24px;font-size:13.5px;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+  }
+
+  .filters{
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    padding:18px 20px;margin-bottom:26px;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;
+    align-items:end;
+  }
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;}
+  select,input[type=text],input[type=date],input[type=number],input[type=tel],input[type=email],input[type=password],textarea{
+    font-family:'Inter',sans-serif;font-size:14px;padding:9px 10px;border-radius:7px;
+    border:1px solid var(--line);background:var(--surface-soft);color:var(--ink);width:100%;
+  }
+  select:focus,input:focus,textarea:focus{outline:2px solid var(--patina);outline-offset:1px;background:#fff;}
+  .filters .field.wide{grid-column:span 2;}
+  .filters-actions{display:flex;gap:10px;grid-column:1/-1;justify-content:flex-end;border-top:1px dashed var(--line);padding-top:14px;margin-top:2px;}
+
+  .summary-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px;}
+  .chip{
+    background:var(--surface);border:1px solid var(--line);border-radius:999px;
+    padding:7px 14px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--muted);
+  }
+  .chip b{color:var(--ink);font-family:'Source Serif 4',serif;font-size:15px;}
+  .chip.dot::before{content:'';width:9px;height:9px;border-radius:50%;display:inline-block;}
+  .chip.recebido.dot::before{background:var(--st-recebido);}
+  .chip.producao.dot::before{background:var(--st-producao);}
+  .chip.aprovacao.dot::before{background:var(--st-aprovacao);}
+  .chip.pronta.dot::before{background:var(--st-pronta);}
+  .chip.entregue.dot::before{background:var(--st-entregue);}
+  .chip.atrasado.dot::before{background:var(--st-atrasado);}
+
+  .date-group{margin-bottom:34px;}
+  .date-heading{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .date-heading h2{font-size:17px;margin:0;font-weight:600;white-space:nowrap;}
+  .date-heading .rule{flex:1;height:1px;background:repeating-linear-gradient(90deg,var(--bronze) 0 6px, transparent 6px 12px);opacity:.55;}
+  .date-heading .count{font-size:12.5px;color:var(--muted);font-family:'Inter',sans-serif;}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;}
+
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    padding:0;overflow:hidden;position:relative;
+    box-shadow:0 1px 2px rgba(30,28,24,.04);
+  }
+  .card .rivet{
+    position:absolute;top:12px;right:12px;width:8px;height:8px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #d8d0c0, var(--bronze));
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.15);
+  }
+  .card-status{
+    padding:9px 16px;font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .card-body{padding:16px;}
+
+  /* ---------- mockup da placa ---------- */
+  .placa-mockup{
+    display:flex;gap:14px;align-items:center;
+    background:linear-gradient(160deg,#161513,#0c0b0a);
+    border-radius:8px;padding:16px 18px;position:relative;
+    box-shadow:0 0 0 2px var(--bronze), 0 0 0 5px rgba(140,106,78,.3) inset;
+  }
+  .placa-mockup--compacta{padding:11px 13px;gap:10px;box-shadow:0 0 0 2px var(--bronze), 0 0 0 4px rgba(140,106,78,.3) inset;}
+  .placa-foto{
+    flex:none;width:76px;height:76px;border-radius:50%;
+    background:#1e1c19;border:2px solid var(--bronze);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .placa-mockup--compacta .placa-foto{width:52px;height:52px;border-width:1.5px;}
+  .placa-foto-icone{width:38px;height:38px;fill:none;stroke:#8c7a5e;stroke-width:2.4;opacity:.55;}
+  .placa-mockup--compacta .placa-foto-icone{width:26px;height:26px;}
+  .placa-texto{flex:1;min-width:0;}
+  .placa-nome{
+    font-family:'Source Serif 4',serif;font-weight:700;color:#E8CD8A;
+    text-transform:uppercase;letter-spacing:.02em;line-height:1.18;
+    margin-bottom:6px;word-break:break-word;
+    text-shadow:0 1px 0 rgba(0,0,0,.4);
+  }
+  .placa-mockup--compacta .placa-nome{margin-bottom:4px;}
+  .placa-data{
+    font-size:12.5px;color:#D8C393;display:flex;align-items:center;gap:6px;margin-bottom:2px;letter-spacing:.02em;
+  }
+  .placa-mockup--compacta .placa-data{font-size:10.5px;}
+  .placa-ico{color:#C9A227;font-size:11px;flex:none;}
+  .placa-frase{
+    margin-top:6px;font-family:'Source Serif 4',serif;font-style:italic;font-size:12px;color:#D8C393;opacity:.92;
+  }
+  .placa-mockup--compacta .placa-frase{font-size:10.5px;margin-top:4px;}
+  .placa-frase-vazia{visibility:hidden;height:12px;}
+
+  .placa-meta{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0;}
+  .tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--surface-soft);color:var(--muted);border:1px solid var(--line);}
+
+  .cliente-section{
+    background:var(--surface-soft);border:1px solid var(--line);border-radius:9px;
+    padding:12px 14px;margin-top:4px;
+  }
+  .cliente-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--bronze-dark);margin-bottom:8px;}
+  .info-line{font-size:13px;color:var(--ink);margin-bottom:4px;display:flex;justify-content:space-between;gap:8px;}
+  .info-line span:first-child{color:var(--muted);}
+  .valores-line{font-size:13px;margin-top:10px;display:flex;justify-content:space-between;padding-top:10px;border-top:1px dashed var(--line);}
+  .valores-line b{font-family:'Source Serif 4',serif;}
+  .pag-badge{font-size:10.5px;font-weight:700;text-transform:uppercase;padding:2px 8px;border-radius:999px;}
+  .pag-pendente{background:var(--st-atrasado-bg);color:var(--st-atrasado);}
+  .pag-parcial{background:var(--st-producao-bg);color:var(--st-producao);}
+  .pag-pago{background:var(--st-pronta-bg);color:var(--st-pronta);}
+
+  .obs-line{font-size:12.5px;color:var(--muted);margin-top:10px;}
+
+  .card-footer{
+    display:flex;justify-content:space-between;align-items:center;gap:8px;
+    padding:12px 16px;border-top:1px solid var(--line);background:var(--surface-soft);
+  }
+  .card-footer .actions{display:flex;gap:6px;flex-wrap:wrap;}
+  .icon-btn{
+    border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 9px;font-size:12.5px;
+    cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;color:var(--ink);
+  }
+  .icon-btn:hover{background:var(--surface-soft);}
+  .icon-btn--whats{background:#25D366;color:#fff;border-color:#1FAF56;}
+  .icon-btn--whats:hover{background:#1FAF56;}
+  .disclaimer{
+    font-size:10px;line-height:1.4;color:#9C9891;padding:10px 16px 14px;border-top:1px dashed var(--line);
+  }
+
+  .empty-state{
+    text-align:center;padding:70px 20px;color:var(--muted);background:var(--surface);
+    border:1px dashed var(--line);border-radius:14px;
+  }
+  .empty-state h3{margin:0 0 6px;font-size:18px;color:var(--ink);}
+
+  /* ---------- modal ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(28,26,22,.5);display:none;
+    align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;z-index:50;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    background:var(--surface);border-radius:14px;max-width:660px;width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+  }
+  .modal-head{
+    padding:20px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;
+    position:sticky;top:0;background:var(--surface);border-radius:14px 14px 0 0;z-index:2;
+  }
+  .modal-head h2{margin:0;font-size:19px;}
+  .modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);line-height:1;}
+  .modal-body{padding:22px 24px;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .modal-body .field.full{grid-column:1/-1;}
+  .modal-body fieldset{grid-column:1/-1;border:1px solid var(--line);border-radius:9px;padding:12px 14px;margin:4px 0 0;}
+  .modal-body legend{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:0 6px;}
+  .radio-row{display:flex;gap:18px;font-size:14px;}
+  .radio-row label{display:flex;align-items:center;gap:6px;font-weight:500;cursor:pointer;}
+  .section-label{grid-column:1/-1;font-size:12px;font-weight:700;color:var(--bronze-dark);text-transform:uppercase;letter-spacing:.05em;margin-top:10px;}
+  .modal-foot{
+    padding:16px 24px 22px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--line);align-items:center;
+  }
+  .hint{font-size:11.5px;color:var(--muted);margin-top:3px;}
+  .modal-error{font-size:12.5px;color:var(--st-atrasado);margin-right:auto;}
+
+  /* ---------- admin ---------- */
+  .admin-locked{
+    text-align:center;padding:80px 20px;color:var(--muted);
+  }
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:26px;}
+  .kpi-card{
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;
+  }
+  .kpi-card .kpi-label{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+  .kpi-icone{width:16px;height:16px;flex:none;opacity:.85;}
+  .kpi-card .kpi-value{font-family:'Source Serif 4',serif;font-size:26px;font-weight:600;}
+  .kpi-card .kpi-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+
+  .admin-section{
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:24px;
+  }
+  .admin-section h3{margin:0 0 4px;font-size:16.5px;}
+  .admin-section .admin-sub{font-size:12.5px;color:var(--muted);margin-bottom:16px;}
+
+  .bar-chart{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:10px;}
+  .bar-chart .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+  .bar-chart .bar{width:70%;background:var(--bronze);border-radius:4px 4px 0 0;min-height:3px;}
+  .bar-chart .bar-num{font-size:11px;color:var(--ink);font-weight:600;margin-bottom:3px;}
+  .bar-chart .bar-label{font-size:10.5px;color:var(--muted);margin-top:6px;}
+
+  .alert-row{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px;
+  }
+  .alert-row:last-child{border-bottom:none;}
+  .alert-row .nome{font-weight:600;}
+  .alert-row .sub{font-size:11.5px;color:var(--muted);}
+  .alert-pill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap;}
+  .alert-pill.atraso{background:var(--st-atrasado-bg);color:var(--st-atrasado);}
+  .alert-pill.avencer{background:var(--st-producao-bg);color:var(--st-producao);}
+
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:9px;}
+  table.planilha{border-collapse:collapse;width:100%;font-size:12.5px;min-width:900px;}
+  table.planilha th{
+    background:var(--surface-soft);text-align:left;padding:9px 10px;font-size:11px;text-transform:uppercase;
+    letter-spacing:.04em;color:var(--muted);border-bottom:1px solid var(--line);white-space:nowrap;
+  }
+  table.planilha td{padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  table.planilha tr:last-child td{border-bottom:none;}
+
+  @media (max-width:640px){
+    .modal-body{grid-template-columns:1fr;}
+    .topbar{padding:16px 18px;flex-wrap:wrap;}
+    .wrap{padding:20px 14px 60px;}
+    .placa-mockup{flex-direction:column;align-items:flex-start;}
+  }
+
+  /* ---------- impressão: espelho em 2 vias (A4) ---------- */
+  .print-area{display:none;}
+  @page{ size:A4; margin:10mm; }
+  @media print{
+    * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important; }
+    body *{visibility:hidden;}
+    .print-area, .print-area *{visibility:visible;}
+    .print-area{display:block;position:absolute;top:0;left:0;width:100%;margin:0;padding:0;}
+    .via{height:132mm;box-sizing:border-box;padding:0 2mm 3mm;page-break-inside:avoid;font-family:'Inter',system-ui,sans-serif;color:#000;}
+    .via-header{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #000;padding-bottom:4px;margin-bottom:7px;}
+    .via-header .via-tag{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:1px solid #000;border-radius:3px;padding:2px 8px;}
+    .via-header .via-empresa{font-family:'Source Serif 4',serif;font-weight:600;font-size:13px;}
+    /* placa da via em formato grande, bem destacada */
+    .via .placa-mockup{margin-bottom:0;padding:14px 16px;gap:14px;}
+    .via .placa-foto{width:72px;height:72px;}
+    .via .placa-data{font-size:12.5px;}
+    .via .placa-frase{font-size:11.5px;}
+    /* dados do cliente separados, em texto pequeno/normal */
+    .via .cliente-section.via-cliente-compacta{background:#f4f4f2;margin-top:8px;padding:8px 10px;}
+    .via .cliente-section.via-cliente-compacta .cliente-label{font-size:9.5px;margin-bottom:5px;}
+    .via-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px 16px;font-size:10px;margin-top:2px;}
+    .via-grid .full{grid-column:1/-1;}
+    .via-grid b{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.04em;color:#555;font-weight:600;}
+    .via-obs{font-size:9.5px;margin-top:5px;}
+    .via-disclaimer{font-size:7.5px;color:#444;margin-top:6px;line-height:1.35;}
+    .via-assinatura{margin-top:10px;display:flex;justify-content:space-between;gap:20px;font-size:9.5px;}
+    .via-assinatura div{flex:1;border-top:1px solid #000;padding-top:3px;text-align:center;}
+    .corte{display:flex;align-items:center;gap:10px;color:#777;font-size:9px;letter-spacing:.15em;text-transform:uppercase;margin:2mm 0;}
+    .corte::before, .corte::after{content:"";flex:1;border-top:1px dashed #777;}
+
+    /* ---------- relatório / lista impressos (Administrador e Pedidos) ---------- */
+    .relatorio-print{font-family:'Inter',system-ui,sans-serif;color:#000;}
+    .relatorio-header{border-bottom:3px solid #000;padding-bottom:8px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+    .relatorio-header h1{font-family:'Source Serif 4',serif;font-size:19px;margin:0;}
+    .relatorio-header div{font-size:10px;color:#555;}
+    .relatorio-print h2{font-family:'Source Serif 4',serif;font-size:14px;margin:18px 0 8px;border-bottom:1px solid #ccc;padding-bottom:4px;}
+    .relatorio-tabela{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:6px;}
+    .relatorio-tabela th, .relatorio-tabela td{border:1px solid #ccc;padding:5px 7px;text-align:left;}
+    .relatorio-tabela th{background:#f0f0f0;}
+    .relatorio-tabela-completa{font-size:9.5px;}
+    .relatorio-tabela tr{page-break-inside:avoid;}
+    .relatorio-filtros{font-size:11px;color:#444;margin:-6px 0 14px;}
+    .relatorio-rodape{font-size:10px;color:#777;margin-top:10px;}
+  }
 </style>
 </head>
 <body>
-<header>
-  <div><h1>Controle de Pedidos — Placas</h1><small>Cemitério da Saudade · Taboão da Serra</small></div>
-  <span class="sp"></span>
-  <button onclick="openData()">Backup / Dados</button>
-  <button onclick="printList()">Imprimir lista</button>
-  <button class="pri" onclick="openForm()">+ Novo pedido</button>
-</header>
-<main>
-  <div class="stats" id="stats"></div>
-  <div class="filters">
-    <input type="search" id="q" placeholder="Buscar falecido, cliente ou telefone" oninput="render()">
-    <select id="fs" onchange="render()"><option value="">Todos os status</option></select>
-    <select id="fp" onchange="render()"><option value="">Todos os pagamentos</option><option>Pendente</option><option>Parcial</option><option>Pago</option></select>
-    <select id="fo" onchange="render()"><option value="n">Mais recentes</option><option value="o">Mais antigos</option><option value="a">Nome A-Z</option></select>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="plate"><span>P</span></div>
+    <div>
+      <h1>Controle de Pedidos — Placas</h1>
+      <p>Gestão compartilhada de encomendas de placas de sepultamento</p>
+    </div>
   </div>
-  <div id="list"></div>
-</main>
-
-<!-- FORMULÁRIO -->
-<dialog id="dForm">
-  <div class="dh"><h2 id="fTitle">Novo pedido</h2><button class="sm" onclick="dForm.close()">✕</button></div>
-  <div class="db">
-    <fieldset class="cli"><legend>👤 Dados do cliente (responsável)</legend>
-      <div class="g">
-        <div class="full"><label>Nome do responsável / cliente *</label><input id="cNome"></div>
-        <div><label>Telefone / WhatsApp *</label><input id="cTel" inputmode="tel" placeholder="(11) 90000-0000"></div>
-        <div><label>Parentesco com o falecido</label><input id="cPar"></div>
-        <div><label>CPF</label><input id="cCpf" inputmode="numeric"></div>
-        <div><label>E-mail</label><input id="cMail" type="email"></div>
-        <div class="full"><label>Endereço para entrega</label><input id="cEnd"></div>
-      </div>
-    </fieldset>
-    <fieldset class="pag"><legend>💳 Pagamento</legend>
-      <div class="g"><div><label>Valor cobrado (R$)</label><input id="vCob" type="number" step="0.01" min="0" oninput="calcTot()"></div></div>
-      <div style="margin-top:10px"><label>Pagamentos recebidos (cada um fica registrado com data e forma)</label><div id="pRows"></div>
-      <button class="sm" type="button" onclick="addPag()">+ Adicionar pagamento</button></div>
-      <div class="tot" id="tot"></div>
-    </fieldset>
-    <fieldset><legend>🪦 Dados da placa</legend>
-      <div class="g">
-        <div class="full"><label>Nome do falecido *</label><input id="fNome"></div>
-        <div><label>Nascimento *</label><input id="fNas" type="date"></div>
-        <div><label>Falecimento *</label><input id="fFal" type="date"></div>
-        <div><label>Foto</label><select id="fFoto"><option>Com foto</option><option>Sem foto</option></select></div>
-        <div><label>Frase</label><select id="fFrase" onchange="fraseT()"><option>Com frase</option><option>Sem frase</option></select></div>
-        <div class="full" id="fraseBox"><label>Texto da frase</label><input id="fFraseT"></div>
-      </div>
-    </fieldset>
-    <fieldset><legend>📋 Pedido</legend>
-      <div class="g">
-        <div><label>Data do pedido *</label><input id="oData" type="date"></div>
-        <div><label>Status *</label><select id="oSt"></select></div>
-        <div class="full"><label>Observações</label><textarea id="oObs" rows="2"></textarea></div>
-      </div>
-    </fieldset>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <div class="nav-toggle">
+      <button id="navPedidos" class="active">Pedidos</button>
+      <button id="navAdmin">Administrador</button>
+    </div>
+    <div class="sync-status" id="syncStatus"><span class="sync-dot" id="syncDot"></span><span id="syncText">—</span></div>
+    <button class="btn btn-ghost" id="btnAtualizar">Atualizar agora</button>
+    <button class="btn btn-primary" id="btnNovo">+ Novo pedido</button>
   </div>
-  <div class="df"><button onclick="dForm.close()">Cancelar</button><button class="pri" onclick="save()">Salvar pedido</button></div>
-</dialog>
+</div>
 
-<!-- DETALHE -->
-<dialog id="dDet">
-  <div class="dh"><h2 id="dTitle"></h2><button class="sm" onclick="dDet.close()">✕</button></div>
-  <div class="db" id="dBody"></div>
-  <div class="df" id="dFoot"></div>
-</dialog>
+<div class="wrap">
 
-<!-- DADOS -->
-<dialog id="dData">
-  <div class="dh"><h2>Backup e armazenamento</h2><button class="sm" onclick="dData.close()">✕</button></div>
-  <div class="db">
-    <div class="tip">Os pedidos ficam salvos <b>neste navegador/computador</b>. Faça backup com frequência e guarde o arquivo em local seguro (Google Drive, pen drive).</div>
-    <p><button onclick="expJson()">⬇ Baixar backup completo (.json)</button></p>
-    <p><button onclick="expCsv()">⬇ Baixar planilha (.csv) — abre no Excel/Sheets</button></p>
-    <p><label>Restaurar backup (.json)</label><input type="file" accept=".json" onchange="impJson(this)"></p>
+  <div id="setupBanner" class="setup-banner" style="display:none;">
+    <h3>Configuração necessária</h3>
+    Este arquivo ainda não está conectado à planilha compartilhada. Abra o <code>index.html</code>, encontre a constante
+    <code>API_URL</code> no início do bloco <code>&lt;script&gt;</code> e cole ali a URL do seu Web App do Google Apps Script
+    (veja o guia <code>COMO_PUBLICAR.md</code> que acompanha este projeto).
   </div>
-</dialog>
 
-<!-- AVISO WHATSAPP -->
-<dialog id="dMsg">
-  <div class="dh"><h2>Aviso ao cliente (WhatsApp)</h2><button class="sm" onclick="dMsg.close()">✕</button></div>
-  <div class="db"><div class="mut" id="mTo" style="margin-bottom:6px"></div><textarea id="mTxt" rows="12"></textarea><div class="mut" style="margin-top:6px">Você pode ajustar o texto antes de enviar.</div></div>
-  <div class="df"><button onclick="copiaMsg()">Copiar texto</button><button class="pri" onclick="enviaMsg()">Abrir WhatsApp</button></div>
-</dialog>
+  <div id="errorBanner" class="error-banner" style="display:none;">
+    <span id="errorText"></span>
+    <button class="btn btn-secondary" id="btnTentarNovamente">Tentar novamente</button>
+  </div>
 
-<!-- IMPRESSÃO -->
-<div id="ficha"></div>
-<div id="lista"></div>
+  <!-- ===================== VIEW: PEDIDOS ===================== -->
+  <div id="viewPedidos">
+
+    <div class="summary-row" id="summaryRow"></div>
+
+    <div class="filters">
+      <div class="field wide">
+        <label for="fBusca">Buscar (falecido ou cliente)</label>
+        <input type="text" id="fBusca" placeholder="Nome do falecido ou do cliente...">
+      </div>
+      <div class="field">
+        <label for="fStatus">Status</label>
+        <select id="fStatus">
+          <option value="">Todos</option>
+          <option value="recebido">Recebido</option>
+          <option value="producao">Em produção</option>
+          <option value="aprovacao">Aguardando aprovação</option>
+          <option value="pronta">Pronta</option>
+          <option value="entregue">Entregue / instalada</option>
+          <option value="atrasado">Atrasado</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="fFoto">Foto</label>
+        <select id="fFoto">
+          <option value="">Todos</option>
+          <option value="sim">Com foto</option>
+          <option value="nao">Sem foto</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="fFrase">Frase</label>
+        <select id="fFrase">
+          <option value="">Todos</option>
+          <option value="sim">Com frase</option>
+          <option value="nao">Sem frase</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="fDataDe">Data do pedido — de</label>
+        <input type="date" id="fDataDe">
+      </div>
+      <div class="field">
+        <label for="fDataAte">Data do pedido — até</label>
+        <input type="date" id="fDataAte">
+      </div>
+      <div class="field">
+        <label for="fOrdenar">Ordenar por</label>
+        <select id="fOrdenar">
+          <option value="data_desc">Data do pedido (mais recente)</option>
+          <option value="data_asc">Data do pedido (mais antiga)</option>
+          <option value="nome_asc">Nome do falecido (A-Z)</option>
+        </select>
+      </div>
+      <div class="filters-actions">
+        <button class="btn btn-secondary" id="btnImprimirLista" type="button">Imprimir lista</button>
+        <button class="btn btn-secondary" id="btnLimparFiltros">Limpar filtros</button>
+      </div>
+    </div>
+
+    <div id="listaContainer"></div>
+  </div>
+
+  <!-- ===================== VIEW: ADMINISTRADOR ===================== -->
+  <div id="viewAdmin" style="display:none;"></div>
+
+</div>
+
+<!-- Área usada só na hora de imprimir (2 vias em 1 folha A4) -->
+<div id="printArea" class="print-area"></div>
+
+<!-- Modal: novo/editar pedido -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitulo">Novo pedido</h2>
+      <button class="modal-close" id="modalClose">&times;</button>
+    </div>
+    <form id="formPedido">
+      <div class="modal-body">
+
+        <div class="field full" id="placaPreviewWrap"></div>
+
+        <div class="section-label">Dados da placa</div>
+        <div class="field full">
+          <label for="nomeFalecido">Nome do falecido *</label>
+          <input type="text" id="nomeFalecido" required>
+        </div>
+        <div class="field">
+          <label for="dataNascimento">Data de nascimento *</label>
+          <input type="date" id="dataNascimento" required>
+        </div>
+        <div class="field">
+          <label for="dataFalecimento">Data de falecimento *</label>
+          <input type="date" id="dataFalecimento" required>
+        </div>
+
+        <fieldset>
+          <legend>Foto</legend>
+          <div class="radio-row">
+            <label><input type="radio" name="comFoto" value="sim"> Com foto</label>
+            <label><input type="radio" name="comFoto" value="nao" checked> Sem foto</label>
+          </div>
+          <p class="hint">Com foto: o espaço da foto aparece na placa. Sem foto: o espaço some e o texto ocupa a largura toda.</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Frase</legend>
+          <div class="radio-row" style="margin-bottom:10px;">
+            <label><input type="radio" name="comFrase" value="sim"> Com frase</label>
+            <label><input type="radio" name="comFrase" value="nao" checked> Sem frase</label>
+          </div>
+          <textarea id="fraseTexto" rows="2" placeholder="Texto da frase (se houver)..." style="width:100%;"></textarea>
+        </fieldset>
+
+        <div class="section-label">Dados do cliente</div>
+        <div class="field full">
+          <label for="clienteNome">Nome do responsável / cliente *</label>
+          <input type="text" id="clienteNome" required>
+        </div>
+        <div class="field">
+          <label for="clienteTelefone">Telefone *</label>
+          <input type="tel" id="clienteTelefone" required placeholder="(00) 00000-0000">
+        </div>
+        <div class="field">
+          <label for="clienteEmail">E-mail</label>
+          <input type="email" id="clienteEmail">
+        </div>
+        <div class="field full">
+          <label for="clienteEndereco">Endereço para entrega</label>
+          <input type="text" id="clienteEndereco">
+        </div>
+
+        <div class="section-label">Pedido, status e valores</div>
+        <div class="field">
+          <label for="dataPedido">Data do pedido *</label>
+          <input type="date" id="dataPedido" required>
+        </div>
+        <div class="field">
+          <label for="status">Status *</label>
+          <select id="status" required>
+            <option value="recebido">Recebido</option>
+            <option value="producao">Em produção</option>
+            <option value="aprovacao">Aguardando aprovação do cliente</option>
+            <option value="pronta">Pronta para entrega/instalação</option>
+            <option value="entregue">Entregue / instalada</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="valorCobrado">Valor cobrado (R$)</label>
+          <input type="number" id="valorCobrado" min="0" step="0.01" placeholder="0,00">
+        </div>
+        <div class="field">
+          <label for="valorPago">Valor pago (R$)</label>
+          <input type="number" id="valorPago" min="0" step="0.01" placeholder="0,00">
+        </div>
+        <div class="field full">
+          <label for="statusPagamento">Status do pagamento</label>
+          <select id="statusPagamento">
+            <option value="pendente">Pendente</option>
+            <option value="parcial">Parcial</option>
+            <option value="pago">Pago</option>
+          </select>
+        </div>
+
+        <div class="field full">
+          <label for="observacoes">Observações</label>
+          <textarea id="observacoes" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <span class="modal-error" id="formError"></span>
+        <button type="button" class="btn btn-secondary" id="btnCancelar">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="btnSalvarPedido">Salvar pedido</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: login administrador -->
+<div class="overlay" id="overlayLogin">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-head">
+      <h2>Área do administrador</h2>
+      <button class="modal-close" id="modalLoginClose">&times;</button>
+    </div>
+    <form id="formLogin">
+      <div class="modal-body" style="grid-template-columns:1fr;">
+        <div class="field full">
+          <label for="loginEmail">E-mail</label>
+          <input type="email" id="loginEmail" required autocomplete="username">
+        </div>
+        <div class="field full">
+          <label for="loginSenha">Senha</label>
+          <input type="password" id="loginSenha" required autocomplete="current-password">
+        </div>
+      </div>
+      <div class="modal-foot">
+        <span class="modal-error" id="loginError"></span>
+        <button type="button" class="btn btn-secondary" id="btnCancelarLogin">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Entrar</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script>
-const K='pedidoplacas.v2';
-const ST=['Recebido','Em produção','Aguardando aprovação','Pronta para entrega','Entregue / instalada'];
-const FORMAS=['PIX','Dinheiro','Cartão de débito','Cartão de crédito','Boleto','Transferência','Depósito'];
-const ATRASO_DIAS=30;
-const $=id=>document.getElementById(id);
-let db=load(),tp=[],editId=null;
-function load(){try{return JSON.parse(localStorage.getItem(K))||[]}catch(e){return[]}}
-function persist(){try{localStorage.setItem(K,JSON.stringify(db))}catch(e){alert('Não foi possível salvar neste navegador. Faça o backup.')}}
-const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const brl=n=>(+n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-const fd=d=>d?d.split('-').reverse().join('/'):'—';
-const today=()=>new Date().toISOString().slice(0,10);
-const fdt=t=>{const d=new Date(t);return d.toLocaleDateString('pt-BR')+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})};
-const uid=()=>Math.random().toString(36).slice(2,9);
-const pago=o=>(o.pag||[]).reduce((s,p)=>s+(+p.valor||0),0);
-const pstat=o=>{const p=pago(o);return p<=0?'Pendente':(p>=o.cobrado&&o.cobrado>0?'Pago':'Parcial')};
-const atrasado=o=>o.status!==ST[4]&&(Date.now()-new Date(o.data))/864e5>ATRASO_DIAS;
-function porForma(o){const m={};(o.pag||[]).forEach(p=>m[p.forma]=(m[p.forma]||0)+(+p.valor||0));return Object.entries(m).map(([f,v])=>f+' '+brl(v)).join(' + ')}
-function resumoPag(o){const ps=pstat(o),f=porForma(o);return ps==='Pago'?'Quitado — '+f:ps==='Parcial'?'Parcial — '+f+' · falta '+brl(o.cobrado-pago(o)):'Nenhum pagamento recebido'}
-const formasOf=o=>[...new Set((o.pag||[]).map(p=>p.forma))].join(', ')||'—';
+(function(){
+  "use strict";
 
-$('fs').innerHTML+=ST.map(s=>`<option>${s}</option>`).join('')+'<option value="__late">Atrasado</option>';
-$('oSt').innerHTML=ST.map(s=>`<option>${s}</option>`).join('');
+  /* =========================================================================
+   * CONFIGURAÇÃO — cole aqui a URL do seu Web App do Google Apps Script
+   * (Extensões > Apps Script > Implantar > Nova implantação > App da Web).
+   * A URL termina em /exec
+   * ========================================================================= */
+  const API_URL = "https://script.google.com/macros/s/AKfycbxn5eEQ_fhj6HD_p5-F0697s23N1qLxIG1wFMzuo3ZfdYL4uBosHKdchPaHQmf7SvyW9g/exec";
+  const AUTO_REFRESH_MS = 20000; // atualiza automaticamente a cada 20s
+  const PRAZO_PADRAO_DIAS = 45;  // usado internamente para alertas do administrador
 
-function filtered(){
-  const q=$('q').value.toLowerCase(),s=$('fs').value,p=$('fp').value,o=$('fo').value;
-  let r=db.filter(x=>(!q||(x.fNome+' '+x.cNome+' '+x.cTel).toLowerCase().includes(q))
-    &&(!s||(s==='__late'?atrasado(x):x.status===s))&&(!p||pstat(x)===p));
-  r.sort((a,b)=>o==='a'?a.fNome.localeCompare(b.fNome):o==='o'?a.data.localeCompare(b.data)||a.n-b.n:b.data.localeCompare(a.data)||b.n-a.n);
-  return r;
-}
-function render(){
-  const cob=db.reduce((s,o)=>s+o.cobrado,0),pg=db.reduce((s,o)=>s+pago(o),0);
-  $('stats').innerHTML=[['Pedidos',db.length],['Em andamento',db.filter(o=>o.status!==ST[4]).length],['Atrasados',db.filter(atrasado).length],['Prontas p/ avisar',db.filter(o=>o.status===ST[3]&&!o.avisoEm).length],['Total cobrado',brl(cob)],['Recebido',brl(pg)],['A receber',brl(cob-pg)]]
-    .map(([a,b])=>`<div class="stat"><b>${b}</b><span>${a}</span></div>`).join('');
-  const r=filtered();
-  $('list').innerHTML=r.length?r.map(o=>{const ps=pstat(o),si=ST.indexOf(o.status);return`<div class="order">
-    <div><div class="lbl">Falecido · Pedido nº ${o.n}</div><h3>${esc(o.fNome)}</h3><div class="mut">${fd(o.fNas)} – ${fd(o.fFal)}</div>
-      <div style="margin-top:6px"><span class="badge s${si}">${o.status}</span> ${atrasado(o)?'<span class="badge late">Atrasado</span>':''}</div></div>
-    <div><div class="lbl">Cliente</div><h3 style="font-size:15px">${esc(o.cNome)}</h3><div class="mut">📞 ${esc(o.cTel)}${o.cPar?' · '+esc(o.cPar):''}</div><div class="mut">Pedido em ${fd(o.data)}</div></div>
-    <div class="money"><div class="lbl">Pagamento</div><span class="badge p-${ps}">${ps}</span><br>Cobrado: <b>${brl(o.cobrado)}</b><br>Pago: ${brl(pago(o))} · Saldo: <b>${brl(o.cobrado-pago(o))}</b><br><b style="color:#8a5a0a">${esc(resumoPag(o))}</b></div>
-    <div style="display:grid;gap:6px"><button class="sm pri" onclick="showDet('${o.id}')">Abrir</button>${o.status===ST[3]?`<button class="sm" onclick="avisar('${o.id}')">📲 ${o.avisoEm?'Avisar novamente':'Avisar cliente'}</button>${o.avisoEm?`<span class="mut">Avisado em ${fd(o.avisoEm.slice(0,10))}</span>`:''}`:''}</div></div>`}).join(''):'<div class="empty">Nenhum pedido encontrado.</div>';
-}
+  const ADMIN_EMAIL = "cemiteriodasaudade19@gmail.com";
+  const ADMIN_SENHA = "cemiterio123";
 
-/* ---------- formulário ---------- */
-function fraseT(){$('fraseBox').style.display=$('fFrase').value==='Com frase'?'':'none'}
-function openForm(id){
-  editId=id||null;const o=id?db.find(x=>x.id===id):null;
-  $('fTitle').textContent=o?`Editar pedido nº ${o.n}`:'Novo pedido';
-  const v=(k,d='')=>o?o[k]??d:d;
-  $('cNome').value=v('cNome');$('cTel').value=v('cTel');$('cPar').value=v('cPar');$('cCpf').value=v('cCpf');$('cMail').value=v('cMail');$('cEnd').value=v('cEnd');
-  $('vCob').value=o?o.cobrado:'';tp=o?JSON.parse(JSON.stringify(o.pag||[])):[];
-  $('fNome').value=v('fNome');$('fNas').value=v('fNas');$('fFal').value=v('fFal');$('fFoto').value=v('foto','Com foto');$('fFrase').value=v('frase','Com frase');$('fFraseT').value=v('fraseT');
-  $('oData').value=v('data',today());$('oSt').value=v('status',ST[0]);$('oObs').value=v('obs');
-  fraseT();drawPag();dDet.close();dForm.showModal();
-}
-function addPag(){tp.push({id:uid(),data:today(),forma:'PIX',valor:''});drawPag()}
-function drawPag(){
-  $('pRows').innerHTML=tp.map((p,i)=>`<div class="pr">
-    <input type="date" value="${p.data}" onchange="tp[${i}].data=this.value">
-    <select onchange="tp[${i}].forma=this.value">${FORMAS.map(f=>`<option${f===p.forma?' selected':''}>${f}</option>`).join('')}</select>
-    <input type="number" step="0.01" min="0" placeholder="Valor R$" value="${p.valor}" oninput="tp[${i}].valor=this.value;calcTot()">
-    <button class="sm del" type="button" onclick="tp.splice(${i},1);drawPag()">✕</button></div>`).join('');
-  calcTot();
-}
-function calcTot(){
-  const c=+$('vCob').value||0,p=tp.reduce((s,x)=>s+(+x.valor||0),0),st=p<=0?'Pendente':(p>=c&&c>0?'Pago':'Parcial');
-  $('tot').innerHTML=`<span>Pago: <b>${brl(p)}</b></span><span>Saldo: <b>${brl(c-p)}</b></span><span class="badge p-${st}">${st}</span>`;
-}
-function save(){
-  const req=[['cNome','nome do cliente'],['cTel','telefone'],['fNome','nome do falecido'],['fNas','data de nascimento'],['fFal','data de falecimento'],['oData','data do pedido']];
-  for(const [k,n] of req)if(!$(k).value.trim()){alert('Preencha: '+n);$(k).focus();return}
-  const old=editId?db.find(x=>x.id===editId):null,now=new Date().toISOString();
-  const o={id:old?old.id:uid(),n:old?old.n:(db.reduce((m,x)=>Math.max(m,x.n),0)+1),hist:old?old.hist:[],
-    cNome:$('cNome').value.trim(),cTel:$('cTel').value.trim(),cPar:$('cPar').value.trim(),cCpf:$('cCpf').value.trim(),cMail:$('cMail').value.trim(),cEnd:$('cEnd').value.trim(),
-    cobrado:+$('vCob').value||0,pag:tp.filter(p=>+p.valor>0).map(p=>({...p,valor:+p.valor})),
-    fNome:$('fNome').value.trim(),fNas:$('fNas').value,fFal:$('fFal').value,foto:$('fFoto').value,frase:$('fFrase').value,fraseT:$('fFraseT').value.trim(),
-    data:$('oData').value,status:$('oSt').value,obs:$('oObs').value.trim()};
-  const log=x=>o.hist.push({t:now,x});
-  if(!old)log('Pedido criado — status: '+o.status);
-  else{
-    if(old.status!==o.status)log(`Status alterado: ${old.status} → ${o.status}`);
-    if(old.cobrado!==o.cobrado)log(`Valor cobrado alterado: ${brl(old.cobrado)} → ${brl(o.cobrado)}`);
-    if(old.cTel!==o.cTel||old.cNome!==o.cNome)log('Dados do cliente atualizados');
+  const DISCLAIMER = "O atendente, em hipótese nenhuma, será responsável pelo serviço de confecção da placa, o qual é executado por empresa terceirizada escolhida pela diretoria.";
+
+  const STATUS_META = {
+    recebido:  {label:"Recebido",             color:"var(--st-recebido)",  bg:"var(--st-recebido-bg)"},
+    producao:  {label:"Em produção",          color:"var(--st-producao)",  bg:"var(--st-producao-bg)"},
+    aprovacao: {label:"Aguardando aprovação", color:"var(--st-aprovacao)", bg:"var(--st-aprovacao-bg)"},
+    pronta:    {label:"Pronta",               color:"var(--st-pronta)",    bg:"var(--st-pronta-bg)"},
+    entregue:  {label:"Entregue / instalada", color:"var(--st-entregue)",  bg:"var(--st-entregue-bg)"},
+    atrasado:  {label:"Atrasado",             color:"var(--st-atrasado)",  bg:"var(--st-atrasado-bg)"}
+  };
+
+  let pedidos = [];
+  let config = {};
+  let editandoId = null;
+  let refreshTimer = null;
+  let viewAtual = "pedidos"; // "pedidos" | "admin"
+  let adminLogado = sessionStorage.getItem("adminLogado") === "1";
+
+  const configurado = () => API_URL && API_URL.indexOf("COLE_AQUI") === -1;
+
+  // ---------- status de sincronização ----------
+  function setSyncStatus(state, msg){
+    const dot = document.getElementById("syncDot");
+    const text = document.getElementById("syncText");
+    dot.className = "sync-dot" + (state === "loading" ? " loading" : state === "error" ? " error" : "");
+    text.textContent = msg;
   }
-  const ids=new Set((old?old.pag:[]).map(p=>p.id));
-  o.pag.forEach(p=>{if(!ids.has(p.id))log(`Pagamento registrado: ${brl(p.valor)} (${p.forma}) em ${fd(p.data)}`)});
-  if(old)(old.pag||[]).forEach(p=>{if(!o.pag.some(x=>x.id===p.id))log(`Pagamento removido: ${brl(p.valor)} (${p.forma})`)});
-  old?db[db.indexOf(old)]=o:db.push(o);
-  persist();dForm.close();render();
-  if(old&&old.status!==o.status&&o.status===ST[3]&&confirm('Placa marcada como "Pronta para entrega". Deseja preparar o aviso ao cliente agora?')){avisar(o.id);return}
-  showDet(o.id);
-}
+  function mostrarErro(msg){
+    document.getElementById("errorBanner").style.display = "flex";
+    document.getElementById("errorText").textContent = msg;
+  }
+  function esconderErro(){ document.getElementById("errorBanner").style.display = "none"; }
 
-/* ---------- detalhe ---------- */
-function showDet(id){
-  const o=db.find(x=>x.id===id);if(!o)return;const ps=pstat(o);
-  $('dTitle').textContent=`Pedido nº ${o.n} — ${o.fNome}`;
-  $('dBody').innerHTML=`
-  <fieldset class="cli"><legend>👤 Cliente</legend><div class="info">
-    <div><span class="lbl">Nome</span><b>${esc(o.cNome)}</b></div><div><span class="lbl">Telefone</span><b>${esc(o.cTel)}</b></div>
-    <div><span class="lbl">Parentesco</span><b>${esc(o.cPar)||'—'}</b></div><div><span class="lbl">CPF</span><b>${esc(o.cCpf)||'—'}</b></div>
-    <div><span class="lbl">E-mail</span><b>${esc(o.cMail)||'—'}</b></div><div><span class="lbl">Endereço de entrega</span><b>${esc(o.cEnd)||'—'}</b></div></div></fieldset>
-  <fieldset class="pag"><legend>💳 Pagamento <span class="badge p-${ps}">${ps}</span></legend><div style="font-weight:700;margin-bottom:6px">${esc(resumoPag(o))}</div>
-    <div class="tot" style="margin:0 0 8px"><span>Cobrado: <b>${brl(o.cobrado)}</b></span><span>Pago: <b>${brl(pago(o))}</b></span><span>Saldo: <b>${brl(o.cobrado-pago(o))}</b></span></div>
-    ${(o.pag||[]).length?`<table style="width:100%;font-size:14px;border-collapse:collapse">${o.pag.slice().sort((a,b)=>a.data.localeCompare(b.data)).map(p=>`<tr><td style="padding:3px 0">${fd(p.data)}</td><td>${esc(p.forma)}</td><td style="text-align:right"><b>${brl(p.valor)}</b></td></tr>`).join('')}</table>`:'<span class="mut">Nenhum pagamento registrado.</span>'}</fieldset>
-  <fieldset><legend>🪦 Placa</legend><div class="info">
-    <div><span class="lbl">Falecido</span><b>${esc(o.fNome)}</b></div><div><span class="lbl">Datas</span><b>${fd(o.fNas)} – ${fd(o.fFal)}</b></div>
-    <div><span class="lbl">Foto / Frase</span><b>${o.foto} · ${o.frase}</b></div><div><span class="lbl">Status</span><b>${o.status}</b></div>
-    ${o.frase==='Com frase'&&o.fraseT?`<div style="grid-column:1/-1"><span class="lbl">Frase</span><b>“${esc(o.fraseT)}”</b></div>`:''}
-    ${o.obs?`<div style="grid-column:1/-1"><span class="lbl">Observações</span><b>${esc(o.obs)}</b></div>`:''}</div></fieldset>
-  <fieldset><legend>🕘 Histórico (do mais antigo ao mais recente)</legend>
-    <ul class="hist">${o.hist.map(h=>`<li><time>${fdt(h.t)}</time>${esc(h.x)}</li>`).join('')}</ul>
-    <div style="display:flex;gap:6px;margin-top:6px"><input id="nota" placeholder="Anotar contato, aviso ao cliente, etc."><button onclick="addNota('${o.id}')">Anotar</button></div></fieldset>`;
-  $('dFoot').innerHTML=`<button class="del" onclick="del('${o.id}')">Excluir</button><button onclick="openForm('${o.id}')">Editar</button><button onclick="avisar('${o.id}')">📲 Avisar cliente</button><button class="pri" onclick="printFicha('${o.id}')">🖨 Imprimir ficha</button>`;
-  if(!dDet.open)dDet.showModal();
-}
-function addNota(id){const t=$('nota').value.trim();if(!t)return;db.find(x=>x.id===id).hist.push({t:new Date().toISOString(),x:'Anotação: '+t});persist();showDet(id)}
-function del(id){if(confirm('Excluir este pedido definitivamente? Faça backup antes.')){db=db.filter(x=>x.id!==id);persist();dDet.close();render()}}
+  // ---------- chamadas à API (planilha) ----------
+  async function apiGetDados(){
+    const resp = await fetch(API_URL + "?action=dados");
+    if(!resp.ok) throw new Error("Falha ao consultar a planilha (HTTP " + resp.status + ")");
+    const data = await resp.json();
+    if(!data.ok) throw new Error(data.erro || "Erro desconhecido ao carregar dados");
+    return data;
+  }
+  async function apiPost(payload){
+    const resp = await fetch(API_URL, {
+      method: "POST",
+      headers: {"Content-Type": "text/plain;charset=utf-8"},
+      body: JSON.stringify(payload)
+    });
+    if(!resp.ok) throw new Error("Falha ao salvar na planilha (HTTP " + resp.status + ")");
+    const data = await resp.json();
+    if(!data.ok) throw new Error(data.erro || "Erro desconhecido ao salvar");
+    return data;
+  }
 
-/* ---------- impressão ---------- */
-function doPrint(mode){document.querySelectorAll('dialog[open]').forEach(d=>d.close());document.body.dataset.p=mode;setTimeout(()=>{window.print();},50)}
-window.onafterprint=()=>{delete document.body.dataset.p};
-function printFicha(id){
-  const o=db.find(x=>x.id===id),ps=pstat(o),pg=(o.pag||[]).slice().sort((a,b)=>a.data.localeCompare(b.data)).slice(0,6),h=o.hist.slice(-6);
-  const kv=(k,v,w)=>`<div${w?' class="w"':''}><span class="k">${k}</span><span class="v">${esc(v)||'—'}</span></div>`;
-  $('ficha').innerHTML=`
-  <div class="fh"><div><h1>Pedido de Placa de Sepultamento</h1><small>Cemitério da Saudade · Secretaria Municipal de Manutenção · Taboão da Serra/SP</small></div>
-    <div style="text-align:right"><b style="font-size:16px">Nº ${o.n}</b><br><small>Pedido em ${fd(o.data)}</small></div></div>
-  <div class="fb big"><h2>Dados do cliente (responsável)</h2><div class="c">
-    ${kv('Nome',o.cNome,1)}${kv('Telefone / WhatsApp',o.cTel)}${kv('Parentesco',o.cPar)}${kv('CPF',o.cCpf)}${kv('E-mail',o.cMail)}${kv('Endereço para entrega',o.cEnd,1)}</div></div>
-  <div class="fb big"><h2>Forma de pagamento e valores</h2><div class="c">
-    ${kv('Como foi pago',resumoPag(o),1)}${kv('Valor cobrado',brl(o.cobrado))}${kv('Situação',ps)}${kv('Total pago',brl(pago(o)))}${kv('Saldo a pagar',brl(o.cobrado-pago(o)))}
-    <div class="w">${pg.length?`<table><tr><th>Data</th><th>Forma</th><th class="r">Valor</th></tr>${pg.map(p=>`<tr><td>${fd(p.data)}</td><td>${esc(p.forma)}</td><td class="r">${brl(p.valor)}</td></tr>`).join('')}</table>`:'<span class="v" style="font-size:11px;font-weight:400">Nenhum pagamento registrado até o momento.</span>'}</div></div></div>
-  <div class="fb"><h2>Dados da placa</h2><div class="c">
-    ${kv('Falecido',o.fNome,1)}${kv('Nascimento',fd(o.fNas))}${kv('Falecimento',fd(o.fFal))}${kv('Foto',o.foto)}${kv('Frase',o.frase==='Com frase'?(o.fraseT||'Com frase'):'Sem frase')}${kv('Situação do pedido',o.status,1)}${o.obs?kv('Observações',o.obs,1):''}</div></div>
-  <div class="fb"><h2>Andamento</h2><div class="c"><div class="w"><table>${h.map(x=>`<tr><td style="width:105px">${new Date(x.t).toLocaleDateString('pt-BR')}</td><td>${esc(x.x)}</td></tr>`).join('')}</table></div></div></div>
-  <div class="sg"><div>Cliente</div><div>Responsável pelo atendimento</div></div>`;
-  doPrint('ficha');
-}
-function printList(){
-  const r=filtered();
-  $('lista').innerHTML=`<h1>Pedidos de Placas — Cemitério da Saudade <small style="font-weight:400;font-size:10px">(emitido em ${new Date().toLocaleDateString('pt-BR')})</small></h1>
-  <table><tr><th>Nº</th><th>Falecido</th><th>Cliente / Telefone</th><th>Status</th><th>Pagamento</th><th class="r">Cobrado</th><th class="r">Pago</th><th class="r">Saldo</th></tr>
-  ${r.map(o=>`<tr><td>${o.n}</td><td>${esc(o.fNome)}</td><td>${esc(o.cNome)}<br>${esc(o.cTel)}</td><td>${o.status}</td><td>${pstat(o)}<br>${esc(formasOf(o))}</td><td class="r">${brl(o.cobrado)}</td><td class="r">${brl(pago(o))}</td><td class="r">${brl(o.cobrado-pago(o))}</td></tr>`).join('')}</table>`;
-  doPrint('lista');
-}
+  async function carregarDados(silencioso){
+    if(!configurado()){
+      document.getElementById("setupBanner").style.display = "block";
+      setSyncStatus("error", "Não configurado");
+      return;
+    }
+    document.getElementById("setupBanner").style.display = "none";
+    if(!silencioso) setSyncStatus("loading", "Sincronizando...");
+    try{
+      const data = await apiGetDados();
+      pedidos = data.pedidos || [];
+      config = data.config || {};
+      esconderErro();
+      setSyncStatus("ok", "Atualizado às " + new Date().toLocaleTimeString("pt-BR"));
+      if(viewAtual === "admin") renderAdmin(); else renderLista();
+    }catch(err){
+      setSyncStatus("error", "Falha ao sincronizar");
+      mostrarErro("Não foi possível falar com a planilha: " + err.message);
+    }
+  }
+  function iniciarAutoAtualizacao(){
+    if(refreshTimer) clearInterval(refreshTimer);
+    refreshTimer = setInterval(() => carregarDados(true), AUTO_REFRESH_MS);
+  }
 
-/* ---------- aviso de chegada da placa ---------- */
-let msgId=null;
-function msgChegou(o){
-  const s=o.cobrado-pago(o);
-  const ini=`Prezado(a) ${o.cNome}, esperamos que esteja bem.\n\nInformamos, com respeito, que a placa em memória de ${o.fNome} (pedido nº ${o.n}) já chegou ao Cemitério da Saudade.\n\n`;
-  const fim=`\n\nAguardamos sua visita em horário de atendimento. Permanecemos à disposição para qualquer dúvida.\n\nAtenciosamente,\nAdministração do Cemitério da Saudade`;
-  return s>0.009
-    ? ini+`Para concluirmos a entrega, pedimos a gentileza de comparecer à administração para o acerto do valor restante de ${brl(s)} (já recebido: ${brl(pago(o))}, de um total de ${brl(o.cobrado)}).`+fim
-    : ini+`O pagamento já foi integralmente quitado. Basta comparecer à administração para combinarmos a entrega da placa.`+fim;
-}
-function avisar(id){
-  const o=db.find(x=>x.id===id);if(!o)return;msgId=id;
-  $('mTo').textContent='Para: '+o.cNome+' · '+o.cTel;$('mTxt').value=msgChegou(o);
-  dDet.close();dMsg.showModal();
-}
-function enviaMsg(){
-  const o=db.find(x=>x.id===msgId);if(!o)return;
-  let n=o.cTel.replace(/\D/g,'');if(n.length<=11)n='55'+n;
-  window.open('https://wa.me/'+n+'?text='+encodeURIComponent($('mTxt').value),'_blank');
-  o.avisoEm=new Date().toISOString();o.hist.push({t:o.avisoEm,x:'Aviso de chegada da placa enviado ao cliente (WhatsApp)'});
-  persist();render();dMsg.close();showDet(o.id);
-}
-function copiaMsg(){
-  try{navigator.clipboard.writeText($('mTxt').value);alert('Texto copiado.')}catch(e){$('mTxt').select()}
-}
+  // ---------- utilidades de data ----------
+  function parseDate(str){
+    if(!str) return null;
+    let s = String(str).trim();
+    if(!s) return null;
+    if(s.includes("T")) s = s.split("T")[0];
+    let y, m, d;
+    if(s.includes("-")){
+      const p = s.split("-").map(Number);
+      if(p.length !== 3) return null;
+      [y, m, d] = p;
+    } else if(s.includes("/")){
+      const p = s.split("/").map(Number);
+      if(p.length !== 3) return null;
+      [d, m, y] = p;
+    } else { return null; }
+    if(!y || !m || !d || isNaN(y) || isNaN(m) || isNaN(d)) return null;
+    const dt = new Date(y, m - 1, d);
+    if(isNaN(dt.getTime())) return null;
+    return dt;
+  }
+  function fmtDate(str){ const d = parseDate(str); if(!d) return "—"; return d.toLocaleDateString("pt-BR"); }
+  function fmtDateLong(str){
+    const d = parseDate(str); if(!d) return "Sem data";
+    return d.toLocaleDateString("pt-BR", {day:"2-digit", month:"long", year:"numeric"});
+  }
+  function addDias(str, dias){
+    const d = parseDate(str); if(!d) return null;
+    d.setDate(d.getDate() + Number(dias));
+    return d;
+  }
+  function hoje(){ const d = new Date(); d.setHours(0,0,0,0); return d; }
+  function diasEntre(a,b){ return Math.round((a - b) / 86400000); }
 
-/* ---------- backup ---------- */
-function openData(){dData.showModal()}
-function dl(name,txt,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type}));a.download=name;a.click()}
-function expJson(){dl(`pedidos-placas-${today()}.json`,JSON.stringify(db,null,1),'application/json')}
-function expCsv(){
-  const L=[['Nº','Data do pedido','Falecido','Nascimento','Falecimento','Cliente','Telefone','E-mail','Endereço','Status','Cobrado','Pago','Saldo','Situação pagamento','Pagamentos (data|forma|valor)','Histórico']];
-  db.forEach(o=>L.push([o.n,o.data,o.fNome,o.fNas,o.fFal,o.cNome,o.cTel,o.cMail,o.cEnd,o.status,o.cobrado,pago(o),o.cobrado-pago(o),pstat(o),(o.pag||[]).map(p=>`${p.data}|${p.forma}|${p.valor}`).join(' ; '),o.hist.map(h=>h.t.slice(0,10)+': '+h.x).join(' ; ')]));
-  dl(`pedidos-placas-${today()}.csv`,'\ufeff'+L.map(r=>r.map(c=>`"${String(c??'').replace(/"/g,'""')}"`).join(';')).join('\n'),'text/csv');
-}
-function impJson(inp){
-  const f=inp.files[0];if(!f)return;const r=new FileReader();
-  r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d))throw 0;if(confirm(`Substituir os dados atuais por ${d.length} pedidos do backup?`)){db=d;persist();render();dData.close()}}catch(e){alert('Arquivo de backup inválido.')}};
-  r.readAsText(f);
-}
-render();
+  function prazoDe(p){ return addDias(p.dataPedido, p.prazoDias || PRAZO_PADRAO_DIAS); }
+  function statusEfetivo(p){
+    if(p.status === "entregue") return "entregue";
+    const prazo = prazoDe(p);
+    if(prazo && diasEntre(hoje(), prazo) > 0) return "atrasado";
+    return p.status;
+  }
+  function fmtMoeda(v){ return (Number(v)||0).toLocaleString("pt-BR", {style:"currency", currency:"BRL"}); }
+
+  function iconeSvg(nome){
+    const icones = {
+      total: '<path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/>',
+      alerta: '<path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17h.01"/>',
+      relogio: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
+      check: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
+      camera: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+      aspas: '<path d="M7 8c-2 1-3 3-3 5.5S6 18 8 18M15 8c-2 1-3 3-3 5.5s2 4.5 4 4.5"/>',
+      dinheiro: '<circle cx="12" cy="12" r="9"/><path d="M9 9.5c0-1 1-1.5 3-1.5s3 .5 3 1.5-1 1.5-3 1.5-3 .5-3 1.5 1 1.5 3 1.5 3-.5 3-1.5M12 6v1.5M12 16.5V18"/>',
+      cofre: '<rect x="4" y="6" width="16" height="13" rx="1.5"/><circle cx="12" cy="12.5" r="2.6"/><path d="M8 6V4h8v2"/>'
+    };
+    return `<svg viewBox="0 0 24 24" class="kpi-icone" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${icones[nome] || ""}</svg>`;
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement("div");
+    div.textContent = str == null ? "" : str;
+    return div.innerHTML;
+  }
+
+  // ---------- mockup visual da placa ----------
+  function fontSizeParaNome(nome, base){
+    base = base || 26;
+    const len = (nome || "").length;
+    let px = base;
+    if(len > 14) px = base * 0.85;
+    if(len > 22) px = base * 0.7;
+    if(len > 30) px = base * 0.58;
+    if(len > 40) px = base * 0.48;
+    return Math.max(px, 11).toFixed(0) + "px";
+  }
+  function gerarPlacaHtml(p, compacta){
+    const nome = (p.nomeFalecido && p.nomeFalecido.trim()) ? p.nomeFalecido.toUpperCase() : "NOME DO FALECIDO";
+    const nasc = p.dataNascimento ? fmtDate(p.dataNascimento) : "00/00/0000";
+    const falec = p.dataFalecimento ? fmtDate(p.dataFalecimento) : "00/00/0000";
+    const temFrase = p.comFrase === "sim" && p.fraseTexto && p.fraseTexto.trim();
+    const temFoto = p.comFoto === "sim";
+    const baseFonte = compacta ? 17 : 27;
+    return `
+      <div class="placa-mockup${compacta ? " placa-mockup--compacta" : ""}">
+        ${temFoto ? `
+        <div class="placa-foto" aria-hidden="true">
+          <svg viewBox="0 0 44 44" class="placa-foto-icone"><circle cx="22" cy="16" r="9"/><path d="M4 40c0-10 8-16 18-16s18 6 18 16"/></svg>
+        </div>` : ""}
+        <div class="placa-texto">
+          <div class="placa-nome" style="font-size:${fontSizeParaNome(nome, baseFonte)}">${escapeHtml(nome)}</div>
+          <div class="placa-data"><span class="placa-ico">&#9733;</span>${nasc}</div>
+          <div class="placa-data"><span class="placa-ico">&#10013;</span>${falec}</div>
+          ${temFrase ? `<div class="placa-frase">&ldquo;${escapeHtml(p.fraseTexto.toUpperCase())}&rdquo;</div>` : `<div class="placa-frase placa-frase-vazia">&nbsp;</div>`}
+        </div>
+      </div>`;
+  }
+
+  // ---------- render: resumo ----------
+  function renderResumo(){
+    const counts = {recebido:0, producao:0, aprovacao:0, pronta:0, entregue:0, atrasado:0};
+    pedidos.forEach(p => { counts[statusEfetivo(p)]++; });
+    const el = document.getElementById("summaryRow");
+    el.innerHTML = `
+      <div class="chip"><b>${pedidos.length}</b> pedidos no total</div>
+      ${Object.keys(STATUS_META).map(k => `<div class="chip dot ${k}">${STATUS_META[k].label}: <b>${counts[k]}</b></div>`).join("")}
+    `;
+  }
+
+  // ---------- filtros ----------
+  function pedidosFiltrados(){
+    const busca = document.getElementById("fBusca").value.trim().toLowerCase();
+    const fStatus = document.getElementById("fStatus").value;
+    const fFoto = document.getElementById("fFoto").value;
+    const fFrase = document.getElementById("fFrase").value;
+    const fDataDe = document.getElementById("fDataDe").value;
+    const fDataAte = document.getElementById("fDataAte").value;
+    const ordenar = document.getElementById("fOrdenar").value;
+
+    let lista = pedidos.filter(p => {
+      if(busca){
+        const alvo = (p.nomeFalecido + " " + p.clienteNome).toLowerCase();
+        if(!alvo.includes(busca)) return false;
+      }
+      if(fStatus && statusEfetivo(p) !== fStatus) return false;
+      if(fFoto && p.comFoto !== fFoto) return false;
+      if(fFrase && p.comFrase !== fFrase) return false;
+      if(fDataDe && p.dataPedido < fDataDe) return false;
+      if(fDataAte && p.dataPedido > fDataAte) return false;
+      return true;
+    });
+
+    lista.sort((a,b) => {
+      if(ordenar === "data_asc") return a.dataPedido.localeCompare(b.dataPedido);
+      if(ordenar === "nome_asc") return a.nomeFalecido.localeCompare(b.nomeFalecido, "pt-BR");
+      return b.dataPedido.localeCompare(a.dataPedido);
+    });
+    return lista;
+  }
+
+  // ---------- render: lista agrupada por data ----------
+  function renderLista(){
+    renderResumo();
+    const lista = pedidosFiltrados();
+    const container = document.getElementById("listaContainer");
+
+    if(pedidos.length === 0){
+      container.innerHTML = `<div class="empty-state"><h3>Nenhum pedido cadastrado</h3><p>Clique em "+ Novo pedido" para registrar a primeira encomenda de placa.</p></div>`;
+      return;
+    }
+    if(lista.length === 0){
+      container.innerHTML = `<div class="empty-state"><h3>Nenhum resultado</h3><p>Nenhum pedido corresponde aos filtros selecionados.</p></div>`;
+      return;
+    }
+
+    const grupos = [];
+    const mapa = {};
+    lista.forEach(p => {
+      if(!mapa[p.dataPedido]){ mapa[p.dataPedido] = []; grupos.push(p.dataPedido); }
+      mapa[p.dataPedido].push(p);
+    });
+
+    container.innerHTML = grupos.map(dataStr => `
+      <div class="date-group">
+        <div class="date-heading">
+          <h2 class="serif">${fmtDateLong(dataStr)}</h2>
+          <div class="rule"></div>
+          <div class="count">${mapa[dataStr].length} pedido${mapa[dataStr].length>1?"s":""}</div>
+        </div>
+        <div class="cards">${mapa[dataStr].map(cardHtml).join("")}</div>
+      </div>
+    `).join("");
+
+    container.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => abrirModal(btn.getAttribute("data-edit"))));
+    container.querySelectorAll("[data-print]").forEach(btn => btn.addEventListener("click", () => imprimirPedido(btn.getAttribute("data-print"))));
+    container.querySelectorAll("[data-whats]").forEach(btn => btn.addEventListener("click", () => abrirWhatsapp(btn.getAttribute("data-whats"))));
+    container.querySelectorAll("[data-del]").forEach(btn => btn.addEventListener("click", () => excluirPedido(btn.getAttribute("data-del"))));
+  }
+
+  function cardHtml(p){
+    const se = statusEfetivo(p);
+    const meta = STATUS_META[se];
+    const pagLabel = {pendente:"Pendente", parcial:"Parcial", pago:"Pago"}[p.statusPagamento] || "Pendente";
+    const pagClass = {pendente:"pag-pendente", parcial:"pag-parcial", pago:"pag-pago"}[p.statusPagamento] || "pag-pendente";
+
+    return `
+    <div class="card">
+      <div class="rivet"></div>
+      <div class="card-status" style="background:${meta.bg};color:${meta.color};">
+        <span>${meta.label}</span><span>#${String(p.id).slice(-5)}</span>
+      </div>
+      <div class="card-body">
+        ${gerarPlacaHtml(p, true)}
+        <div class="placa-meta">
+          <span class="tag">${p.comFoto === "sim" ? "Com foto" : "Sem foto"}</span>
+          <span class="tag">${p.comFrase === "sim" ? "Com frase" : "Sem frase"}</span>
+        </div>
+
+        <div class="cliente-section">
+          <div class="cliente-label">Dados do cliente</div>
+          <div class="info-line"><span>Cliente</span><span>${escapeHtml(p.clienteNome)}</span></div>
+          <div class="info-line"><span>Telefone</span><span>${escapeHtml(p.clienteTelefone || "—")}</span></div>
+          ${p.clienteEmail ? `<div class="info-line"><span>E-mail</span><span>${escapeHtml(p.clienteEmail)}</span></div>` : ""}
+          ${p.clienteEndereco ? `<div class="info-line"><span>Endereço</span><span>${escapeHtml(p.clienteEndereco)}</span></div>` : ""}
+          <div class="info-line"><span>Data do pedido</span><span>${fmtDate(p.dataPedido)}</span></div>
+        </div>
+
+        ${(Number(p.valorCobrado) > 0 || Number(p.valorPago) > 0) ? `
+        <div class="valores-line">
+          <span>${fmtMoeda(p.valorCobrado)} cobrado${Number(p.valorPago)>0 ? " · " + fmtMoeda(p.valorPago) + " pago" : ""}</span>
+          <span class="pag-badge ${pagClass}">${pagLabel}</span>
+        </div>` : ""}
+
+        ${p.observacoes ? `<div class="obs-line"><b>Obs.:</b> ${escapeHtml(p.observacoes)}</div>` : ""}
+      </div>
+      <div class="card-footer">
+        <div class="actions">
+          <button class="icon-btn" data-edit="${p.id}">Editar</button>
+          <button class="icon-btn" data-print="${p.id}">Imprimir</button>
+          <button class="icon-btn icon-btn--whats" data-whats="${p.id}">WhatsApp</button>
+          <button class="icon-btn" data-del="${p.id}">Excluir</button>
+        </div>
+      </div>
+      <div class="disclaimer">${DISCLAIMER}</div>
+    </div>`;
+  }
+
+  // ---------- modal pedido ----------
+  const overlay = document.getElementById("overlay");
+  const form = document.getElementById("formPedido");
+
+  function dadosDoFormulario(){
+    return {
+      nomeFalecido: document.getElementById("nomeFalecido").value,
+      dataNascimento: document.getElementById("dataNascimento").value,
+      dataFalecimento: document.getElementById("dataFalecimento").value,
+      comFoto: form.querySelector('input[name=comFoto]:checked') ? form.querySelector('input[name=comFoto]:checked').value : "nao",
+      comFrase: form.querySelector('input[name=comFrase]:checked') ? form.querySelector('input[name=comFrase]:checked').value : "nao",
+      fraseTexto: document.getElementById("fraseTexto").value
+    };
+  }
+  function atualizarPreview(){
+    document.getElementById("placaPreviewWrap").innerHTML = gerarPlacaHtml(dadosDoFormulario(), false);
+  }
+  ["nomeFalecido","dataNascimento","dataFalecimento","fraseTexto"].forEach(id => {
+    document.getElementById(id).addEventListener("input", atualizarPreview);
+  });
+  form.querySelectorAll('input[name=comFrase]').forEach(r => r.addEventListener("change", atualizarPreview));
+  form.querySelectorAll('input[name=comFoto]').forEach(r => r.addEventListener("change", atualizarPreview));
+
+  function abrirModal(id){
+    editandoId = id || null;
+    document.getElementById("modalTitulo").textContent = id ? "Editar pedido" : "Novo pedido";
+    document.getElementById("formError").textContent = "";
+    form.reset();
+
+    if(id){
+      const p = pedidos.find(x => String(x.id) === String(id));
+      if(p){
+        document.getElementById("nomeFalecido").value = p.nomeFalecido;
+        document.getElementById("dataNascimento").value = p.dataNascimento;
+        document.getElementById("dataFalecimento").value = p.dataFalecimento;
+        form.querySelector(`input[name=comFoto][value="${p.comFoto}"]`).checked = true;
+        form.querySelector(`input[name=comFrase][value="${p.comFrase}"]`).checked = true;
+        document.getElementById("fraseTexto").value = p.fraseTexto || "";
+        document.getElementById("clienteNome").value = p.clienteNome;
+        document.getElementById("clienteTelefone").value = p.clienteTelefone;
+        document.getElementById("clienteEmail").value = p.clienteEmail || "";
+        document.getElementById("clienteEndereco").value = p.clienteEndereco || "";
+        document.getElementById("dataPedido").value = p.dataPedido;
+        document.getElementById("status").value = p.status;
+        document.getElementById("valorCobrado").value = p.valorCobrado || "";
+        document.getElementById("valorPago").value = p.valorPago || "";
+        document.getElementById("statusPagamento").value = p.statusPagamento || "pendente";
+        document.getElementById("observacoes").value = p.observacoes || "";
+      }
+    } else {
+      document.getElementById("dataPedido").value = new Date().toISOString().slice(0,10);
+      document.getElementById("statusPagamento").value = "pendente";
+    }
+    atualizarPreview();
+    overlay.classList.add("open");
+  }
+  function fecharModal(){ overlay.classList.remove("open"); editandoId = null; }
+
+  document.getElementById("btnNovo").addEventListener("click", () => abrirModal(null));
+  document.getElementById("modalClose").addEventListener("click", fecharModal);
+  document.getElementById("btnCancelar").addEventListener("click", fecharModal);
+  overlay.addEventListener("click", (e) => { if(e.target === overlay) fecharModal(); });
+
+  form.addEventListener("submit", async function(e){
+    e.preventDefault();
+    if(!configurado()){
+      document.getElementById("formError").textContent = "Configure a API_URL no código antes de salvar.";
+      return;
+    }
+    const existente = editandoId ? pedidos.find(x => String(x.id) === String(editandoId)) : null;
+    const dados = {
+      id: editandoId || (Date.now().toString(36) + Math.random().toString(36).slice(2,7)),
+      nomeFalecido: document.getElementById("nomeFalecido").value.trim(),
+      dataNascimento: document.getElementById("dataNascimento").value,
+      dataFalecimento: document.getElementById("dataFalecimento").value,
+      comFoto: form.querySelector('input[name=comFoto]:checked').value,
+      comFrase: form.querySelector('input[name=comFrase]:checked').value,
+      fraseTexto: document.getElementById("fraseTexto").value.trim(),
+      clienteNome: document.getElementById("clienteNome").value.trim(),
+      clienteTelefone: document.getElementById("clienteTelefone").value.trim(),
+      clienteEmail: document.getElementById("clienteEmail").value.trim(),
+      clienteEndereco: document.getElementById("clienteEndereco").value.trim(),
+      dataPedido: document.getElementById("dataPedido").value,
+      prazoDias: existente ? (existente.prazoDias || PRAZO_PADRAO_DIAS) : PRAZO_PADRAO_DIAS,
+      status: document.getElementById("status").value,
+      valorCobrado: Number(document.getElementById("valorCobrado").value) || 0,
+      valorPago: Number(document.getElementById("valorPago").value) || 0,
+      statusPagamento: document.getElementById("statusPagamento").value,
+      observacoes: document.getElementById("observacoes").value.trim()
+    };
+
+    const btnSalvar = document.getElementById("btnSalvarPedido");
+    btnSalvar.disabled = true;
+    btnSalvar.textContent = "Salvando...";
+    document.getElementById("formError").textContent = "";
+    try{
+      const data = await apiPost({ action: "salvarPedido", pedido: dados });
+      pedidos = data.pedidos || [];
+      fecharModal();
+      renderLista();
+      setSyncStatus("ok", "Atualizado às " + new Date().toLocaleTimeString("pt-BR"));
+    }catch(err){
+      document.getElementById("formError").textContent = "Erro ao salvar: " + err.message;
+    }finally{
+      btnSalvar.disabled = false;
+      btnSalvar.textContent = "Salvar pedido";
+    }
+  });
+
+  async function excluirPedido(id){
+    if(!confirm("Excluir este pedido? Esta ação não pode ser desfeita e vale para todos os colegas.")) return;
+    try{
+      const data = await apiPost({ action: "excluirPedido", id: id });
+      pedidos = data.pedidos || [];
+      renderLista();
+    }catch(err){
+      mostrarErro("Não foi possível excluir: " + err.message);
+    }
+  }
+
+  // ---------- impressão (2 vias em A4) ----------
+  function viaHtml(p, rotulo){
+    const se = statusEfetivo(p);
+    const meta = STATUS_META[se];
+    return `
+      <div class="via">
+        <div class="via-header">
+          <span class="via-tag">${rotulo}</span>
+          <span class="via-empresa">Controle de Pedidos — Placas</span>
+        </div>
+        ${gerarPlacaHtml(p, false)}
+        <span class="via-status" style="display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;border:1px solid #000;border-radius:3px;padding:2px 8px;margin-top:8px;">${meta.label} · Pedido #${String(p.id).slice(-5)}</span>
+        <div class="cliente-section via-cliente-compacta" style="margin-top:8px;">
+          <div class="cliente-label">Dados do cliente</div>
+          <div class="via-grid">
+            <div><b>Cliente</b>${escapeHtml(p.clienteNome || "—")}</div>
+            <div><b>Telefone</b>${escapeHtml(p.clienteTelefone || "—")}</div>
+            ${p.clienteEmail ? `<div><b>E-mail</b>${escapeHtml(p.clienteEmail)}</div>` : ""}
+            ${p.clienteEndereco ? `<div class="full"><b>Endereço</b>${escapeHtml(p.clienteEndereco)}</div>` : ""}
+            <div><b>Data do pedido</b>${fmtDate(p.dataPedido)}</div>
+            <div><b>Foto / Frase</b>${p.comFoto === "sim" ? "Com foto" : "Sem foto"} · ${p.comFrase === "sim" ? "Com frase" : "Sem frase"}</div>
+          </div>
+        </div>
+        ${p.observacoes ? `<div class="via-obs"><b>Observações:</b> ${escapeHtml(p.observacoes)}</div>` : ""}
+        <div class="via-assinatura">
+          <div>Assinatura do cliente</div>
+          <div>Data de retirada / entrega</div>
+        </div>
+        <div class="via-disclaimer">${DISCLAIMER}</div>
+      </div>`;
+  }
+  function imprimirPedido(id){
+    const p = pedidos.find(x => String(x.id) === String(id));
+    if(!p) return;
+    const area = document.getElementById("printArea");
+    area.innerHTML = viaHtml(p, "Via — Arquivo") + `<div class="corte">Corte aqui</div>` + viaHtml(p, "Via — Cliente");
+    window.print();
+  }
+
+  // ---------- WhatsApp: avisar cliente que a placa ficou pronta ----------
+  function formatarTelefoneWhatsapp(tel){
+    let digitos = String(tel || "").replace(/\D/g, "");
+    if(!digitos) return "";
+    if(digitos.length <= 11) digitos = "55" + digitos; // assume DDD + número, sem código do país
+    return digitos;
+  }
+  function mensagemPlacaPronta(p){
+    return "Olá, " + p.clienteNome + ", tudo bem?\n" +
+      "Gostaríamos de informar que a placa de homenagem/lápide em memória de " + p.nomeFalecido + " já está pronta!\n" +
+      "Você pode vir até a nossa administração de segunda a sexta feira das 8:00 as 11:00, ou das 14 as 16hs para fazer a retirada ou, caso prefira, podemos agendar a colagem/instalação no local.\n" +
+      "Por favor, nos avise como prefere proceder para alinharmos os detalhes!\n" +
+      "Atenciosamente,";
+  }
+  function mensagemLembretePrazo(p, diasInfo){
+    return "Olá, " + p.clienteNome + ", tudo bem?\n" +
+      "Estamos entrando em contato sobre o pedido da placa em memória de " + p.nomeFalecido + ". " + diasInfo + "\n" +
+      "Gostaríamos de alinhar os detalhes de entrega/instalação. Qualquer dúvida, estamos à disposição!\n" +
+      "Atenciosamente,";
+  }
+  function abrirWhatsappComMensagem(p, mensagem){
+    const numero = formatarTelefoneWhatsapp(p.clienteTelefone);
+    if(!numero){
+      alert("Este pedido não tem telefone cadastrado. Edite o pedido e adicione um telefone para enviar pelo WhatsApp.");
+      return;
+    }
+    window.open("https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem), "_blank");
+  }
+  function abrirWhatsapp(id){
+    const p = pedidos.find(x => String(x.id) === String(id));
+    if(!p) return;
+    abrirWhatsappComMensagem(p, mensagemPlacaPronta(p));
+  }
+  function abrirWhatsappLembrete(id, diasInfo){
+    const p = pedidos.find(x => String(x.id) === String(id));
+    if(!p) return;
+    abrirWhatsappComMensagem(p, mensagemLembretePrazo(p, diasInfo || ""));
+  }
+
+  // ---------- filtros: eventos ----------
+  ["fBusca","fStatus","fFoto","fFrase","fDataDe","fDataAte","fOrdenar"].forEach(id => {
+    document.getElementById(id).addEventListener("input", renderLista);
+    document.getElementById(id).addEventListener("change", renderLista);
+  });
+  document.getElementById("btnLimparFiltros").addEventListener("click", () => {
+    document.getElementById("fBusca").value = "";
+    document.getElementById("fStatus").value = "";
+    document.getElementById("fFoto").value = "";
+    document.getElementById("fFrase").value = "";
+    document.getElementById("fDataDe").value = "";
+    document.getElementById("fDataAte").value = "";
+    document.getElementById("fOrdenar").value = "data_desc";
+    renderLista();
+  });
+  document.getElementById("btnAtualizar").addEventListener("click", () => carregarDados(false));
+  document.getElementById("btnTentarNovamente").addEventListener("click", () => carregarDados(false));
+
+  function resumoFiltrosAtivos(){
+    const partes = [];
+    const busca = document.getElementById("fBusca").value.trim();
+    const st = document.getElementById("fStatus").value;
+    const foto = document.getElementById("fFoto").value;
+    const frase = document.getElementById("fFrase").value;
+    const de = document.getElementById("fDataDe").value;
+    const ate = document.getElementById("fDataAte").value;
+    if(busca) partes.push('Busca: "' + busca + '"');
+    if(st) partes.push("Status: " + STATUS_META[st].label);
+    if(foto) partes.push(foto === "sim" ? "Com foto" : "Sem foto");
+    if(frase) partes.push(frase === "sim" ? "Com frase" : "Sem frase");
+    if(de) partes.push("De: " + fmtDate(de));
+    if(ate) partes.push("Até: " + fmtDate(ate));
+    return partes.length ? partes.join(" · ") : "Nenhum filtro aplicado (todos os pedidos)";
+  }
+
+  function linhaTabelaPedido(p){
+    return `<tr>
+      <td>${escapeHtml(p.nomeFalecido)}</td>
+      <td>${STATUS_META[statusEfetivo(p)].label}</td>
+      <td>${fmtDate(p.dataPedido)}</td>
+      <td>${escapeHtml(p.clienteNome)}</td>
+      <td>${escapeHtml(p.clienteTelefone || "—")}</td>
+      <td>${p.comFoto === "sim" ? "Sim" : "Não"}</td>
+      <td>${p.comFrase === "sim" ? "Sim" : "Não"}</td>
+      <td>${fmtMoeda(p.valorCobrado)}</td>
+      <td>${fmtMoeda(p.valorPago)}</td>
+      <td>${({pendente:"Pendente",parcial:"Parcial",pago:"Pago"})[p.statusPagamento] || "Pendente"}</td>
+    </tr>`;
+  }
+  const CABECALHO_TABELA_PEDIDOS = `<tr><th>Falecido</th><th>Status</th><th>Data pedido</th><th>Cliente</th><th>Telefone</th><th>Foto</th><th>Frase</th><th>Cobrado</th><th>Pago</th><th>Pagamento</th></tr>`;
+
+  function imprimirListaFiltrada(){
+    const lista = pedidosFiltrados();
+    const html = `
+      <div class="relatorio-print">
+        <div class="relatorio-header">
+          <h1>Lista de Pedidos — Controle de Placas</h1>
+          <div>Gerado em ${new Date().toLocaleString("pt-BR")}</div>
+        </div>
+        <p class="relatorio-filtros"><b>Filtros aplicados:</b> ${escapeHtml(resumoFiltrosAtivos())}</p>
+        <table class="relatorio-tabela relatorio-tabela-completa">
+          ${CABECALHO_TABELA_PEDIDOS}
+          ${lista.map(linhaTabelaPedido).join("")}
+        </table>
+        <p class="relatorio-rodape">${lista.length} pedido(s) nesta lista.</p>
+      </div>`;
+    document.getElementById("printArea").innerHTML = html;
+    window.print();
+  }
+  document.getElementById("btnImprimirLista").addEventListener("click", imprimirListaFiltrada);
+
+  // ======================================================================
+  // ADMINISTRADOR
+  // ======================================================================
+  const overlayLogin = document.getElementById("overlayLogin");
+  const formLogin = document.getElementById("formLogin");
+
+  function mostrarViewPedidos(){
+    viewAtual = "pedidos";
+    document.getElementById("viewPedidos").style.display = "block";
+    document.getElementById("viewAdmin").style.display = "none";
+    document.getElementById("navPedidos").classList.add("active");
+    document.getElementById("navAdmin").classList.remove("active");
+    document.getElementById("btnNovo").style.display = "inline-flex";
+    renderLista();
+  }
+  function mostrarViewAdmin(){
+    viewAtual = "admin";
+    document.getElementById("viewPedidos").style.display = "none";
+    document.getElementById("viewAdmin").style.display = "block";
+    document.getElementById("navPedidos").classList.remove("active");
+    document.getElementById("navAdmin").classList.add("active");
+    document.getElementById("btnNovo").style.display = "none";
+    renderAdmin();
+  }
+
+  document.getElementById("navPedidos").addEventListener("click", mostrarViewPedidos);
+  document.getElementById("navAdmin").addEventListener("click", () => {
+    if(adminLogado){ mostrarViewAdmin(); } else { document.getElementById("loginError").textContent = ""; overlayLogin.classList.add("open"); }
+  });
+  document.getElementById("modalLoginClose").addEventListener("click", () => overlayLogin.classList.remove("open"));
+  document.getElementById("btnCancelarLogin").addEventListener("click", () => overlayLogin.classList.remove("open"));
+  overlayLogin.addEventListener("click", (e) => { if(e.target === overlayLogin) overlayLogin.classList.remove("open"); });
+
+  formLogin.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+    const senha = document.getElementById("loginSenha").value;
+    if(email === ADMIN_EMAIL && senha === ADMIN_SENHA){
+      adminLogado = true;
+      sessionStorage.setItem("adminLogado", "1");
+      overlayLogin.classList.remove("open");
+      formLogin.reset();
+      mostrarViewAdmin();
+    } else {
+      document.getElementById("loginError").textContent = "E-mail ou senha inválidos.";
+    }
+  });
+
+  function sair(){
+    adminLogado = false;
+    sessionStorage.removeItem("adminLogado");
+    mostrarViewPedidos();
+  }
+
+  function pedidosAtivos(){ return pedidos.filter(p => p.status !== "entregue"); }
+
+  function prazosAVencer(diasJanela){
+    const hj = hoje();
+    return pedidosAtivos().filter(p => {
+      const d = prazoDe(p); if(!d) return false;
+      const diff = diasEntre(d, hj);
+      return diff >= 0 && diff <= diasJanela;
+    }).sort((a,b) => prazoDe(a) - prazoDe(b));
+  }
+  function prazosAtrasados(){
+    const hj = hoje();
+    return pedidosAtivos().filter(p => {
+      const d = prazoDe(p); if(!d) return false;
+      return diasEntre(hj, d) > 0;
+    }).sort((a,b) => diasEntre(hoje(), prazoDe(a)) < diasEntre(hoje(), prazoDe(b)) ? 1 : -1);
+  }
+
+  function pedidosPorMes(){
+    const map = {};
+    pedidos.forEach(p => {
+      if(!p.dataPedido) return;
+      const key = String(p.dataPedido).slice(0,7);
+      if(!/^\d{4}-\d{2}$/.test(key)) return;
+      map[key] = (map[key] || 0) + 1;
+    });
+    return Object.keys(map).sort().slice(-8).map(k => ({ chave:k, total: map[k] }));
+  }
+
+  function exportarCsv(){
+    const cols = ["id","nomeFalecido","dataNascimento","dataFalecimento","comFoto","comFrase","fraseTexto",
+      "clienteNome","clienteTelefone","clienteEmail","clienteEndereco","dataPedido","status",
+      "valorCobrado","valorPago","statusPagamento","observacoes"];
+    const escCsv = v => {
+      if(v === undefined || v === null) return "";
+      const s = String(v).replace(/"/g,'""');
+      return /[;"\n]/.test(s) ? `"${s}"` : s;
+    };
+    const linhas = [cols.join(";")].concat(pedidos.map(p => cols.map(c => escCsv(p[c])).join(";")));
+    const blob = new Blob(["\uFEFF" + linhas.join("\n")], {type:"text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "pedidos_placas_" + new Date().toISOString().slice(0,10) + ".csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function imprimirRelatorio(){
+    const total = pedidos.length;
+    const counts = {recebido:0, producao:0, aprovacao:0, pronta:0, entregue:0, atrasado:0};
+    pedidos.forEach(p => counts[statusEfetivo(p)]++);
+    const totalCobrado = pedidos.reduce((s,p) => s + (Number(p.valorCobrado)||0), 0);
+    const totalPago = pedidos.reduce((s,p) => s + (Number(p.valorPago)||0), 0);
+    const aVencer = prazosAVencer(15);
+    const atrasados = prazosAtrasados();
+    const meses = pedidosPorMes();
+    const linha = (label, val) => `<tr><td>${label}</td><td>${val}</td></tr>`;
+
+    const html = `
+      <div class="relatorio-print">
+        <div class="relatorio-header">
+          <h1>Relatório — Controle de Pedidos de Placas</h1>
+          <div>Gerado em ${new Date().toLocaleString("pt-BR")}</div>
+        </div>
+
+        <h2>Resumo geral</h2>
+        <table class="relatorio-tabela">
+          ${linha("Total de pedidos", total)}
+          ${linha("Recebido", counts.recebido)}
+          ${linha("Em produção", counts.producao)}
+          ${linha("Aguardando aprovação", counts.aprovacao)}
+          ${linha("Pronta", counts.pronta)}
+          ${linha("Entregue", counts.entregue)}
+          ${linha("Atrasado", counts.atrasado)}
+        </table>
+
+        <h2>Financeiro</h2>
+        <table class="relatorio-tabela">
+          ${linha("Valor total previsto", fmtMoeda(totalCobrado))}
+          ${linha("Valor recebido", fmtMoeda(totalPago))}
+          ${linha("Valor pendente", fmtMoeda(totalCobrado - totalPago))}
+        </table>
+
+        <h2>Pedidos por mês</h2>
+        <table class="relatorio-tabela">
+          <tr><th>Mês</th><th>Pedidos</th></tr>
+          ${meses.map(m => {
+            const d = parseDate(m.chave + "-01");
+            const label = d ? d.toLocaleDateString("pt-BR", {month:"long", year:"numeric"}) : m.chave;
+            return `<tr><td>${label}</td><td>${m.total}</td></tr>`;
+          }).join("")}
+        </table>
+
+        <h2>Prazos atrasados (${atrasados.length})</h2>
+        ${atrasados.length ? `<table class="relatorio-tabela"><tr><th>Falecido</th><th>Cliente</th><th>Dias em atraso</th></tr>
+        ${atrasados.map(p => { const d = prazoDe(p); const dias = d ? diasEntre(hoje(), d) : 0;
+          return `<tr><td>${escapeHtml(p.nomeFalecido)}</td><td>${escapeHtml(p.clienteNome || "—")}</td><td>${dias}</td></tr>`; }).join("")}
+        </table>` : `<p>Nenhum pedido em atraso.</p>`}
+
+        <h2>Prazos a vencer nos próximos 15 dias (${aVencer.length})</h2>
+        ${aVencer.length ? `<table class="relatorio-tabela"><tr><th>Falecido</th><th>Cliente</th><th>Vence em</th></tr>
+        ${aVencer.map(p => { const d = prazoDe(p); const dias = d ? diasEntre(d, hoje()) : 0;
+          return `<tr><td>${escapeHtml(p.nomeFalecido)}</td><td>${escapeHtml(p.clienteNome || "—")}</td><td>${dias} dia(s)</td></tr>`; }).join("")}
+        </table>` : `<p>Nenhum pedido com prazo próximo.</p>`}
+
+        <h2>Planilha completa (${pedidos.length})</h2>
+        <table class="relatorio-tabela relatorio-tabela-completa">
+          ${CABECALHO_TABELA_PEDIDOS}
+          ${pedidos.map(linhaTabelaPedido).join("")}
+        </table>
+      </div>`;
+    document.getElementById("printArea").innerHTML = html;
+    window.print();
+  }
+
+  async function salvarConfigLembrete(){
+    const email = document.getElementById("configEmailLembrete").value.trim();
+    const btn = document.getElementById("btnSalvarConfig");
+    const msg = document.getElementById("configSalvoMsg");
+    btn.disabled = true; btn.textContent = "Salvando...";
+    try{
+      const data = await apiPost({ action: "salvarConfig", config: { emailLembrete: email } });
+      pedidos = data.pedidos || pedidos;
+      config = data.config || config;
+      msg.style.display = "block";
+      msg.textContent = email ? "E-mail salvo! Não esqueça de rodar configurarLembretes() no Apps Script (uma vez só)." : "E-mail removido — os lembretes automáticos ficam desativados.";
+      setTimeout(() => { msg.style.display = "none"; }, 6000);
+    }catch(err){
+      mostrarErro("Não foi possível salvar a configuração: " + err.message);
+    }finally{
+      btn.disabled = false; btn.textContent = "Salvar";
+    }
+  }
+
+  function renderAdmin(){
+    const el = document.getElementById("viewAdmin");
+    const total = pedidos.length;
+    const counts = {recebido:0, producao:0, aprovacao:0, pronta:0, entregue:0, atrasado:0};
+    let comFoto = 0, comFrase = 0;
+    pedidos.forEach(p => {
+      counts[statusEfetivo(p)]++;
+      if(p.comFoto === "sim") comFoto++;
+      if(p.comFrase === "sim") comFrase++;
+    });
+    const totalCobrado = pedidos.reduce((s,p) => s + (Number(p.valorCobrado)||0), 0);
+    const totalPago = pedidos.reduce((s,p) => s + (Number(p.valorPago)||0), 0);
+    const totalPendente = totalCobrado - totalPago;
+
+    const aVencer = prazosAVencer(15);
+    const atrasados = prazosAtrasados();
+    const meses = pedidosPorMes();
+    const maxMes = Math.max(1, ...meses.map(m => m.total));
+
+    el.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+        <div>
+          <h2 class="serif" style="margin:0;font-size:22px;">Painel do administrador</h2>
+          <p style="margin:4px 0 0;color:var(--muted);font-size:13px;">Métricas, financeiro e prazos de todos os pedidos.</p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-secondary" id="btnImprimirRelatorio">Imprimir relatório</button>
+          <button class="btn btn-secondary" id="btnExportarCsv">Exportar planilha (CSV)</button>
+          <button class="btn btn-secondary" id="btnSairAdmin">Sair</button>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label">${iconeSvg("total")}Total de pedidos</div><div class="kpi-value">${total}</div></div>
+        <div class="kpi-card"><div class="kpi-label" style="color:var(--st-atrasado);">${iconeSvg("alerta")}Atrasados</div><div class="kpi-value" style="color:var(--st-atrasado);">${counts.atrasado}</div></div>
+        <div class="kpi-card"><div class="kpi-label" style="color:var(--st-producao);">${iconeSvg("relogio")}Em produção</div><div class="kpi-value" style="color:var(--st-producao);">${counts.producao}</div></div>
+        <div class="kpi-card"><div class="kpi-label" style="color:var(--st-entregue);">${iconeSvg("check")}Entregues</div><div class="kpi-value" style="color:var(--st-entregue);">${counts.entregue}</div></div>
+        <div class="kpi-card"><div class="kpi-label">${iconeSvg("camera")}Com foto</div><div class="kpi-value">${comFoto}</div><div class="kpi-sub">${total ? Math.round(comFoto/total*100) : 0}% dos pedidos</div></div>
+        <div class="kpi-card"><div class="kpi-label">${iconeSvg("aspas")}Com frase</div><div class="kpi-value">${comFrase}</div><div class="kpi-sub">${total ? Math.round(comFrase/total*100) : 0}% dos pedidos</div></div>
+        <div class="kpi-card"><div class="kpi-label">${iconeSvg("dinheiro")}Valor total previsto</div><div class="kpi-value">${fmtMoeda(totalCobrado)}</div></div>
+        <div class="kpi-card"><div class="kpi-label">${iconeSvg("cofre")}Recebido / pendente</div><div class="kpi-value" style="font-size:19px;">${fmtMoeda(totalPago)}</div><div class="kpi-sub">${fmtMoeda(totalPendente)} a receber</div></div>
+      </div>
+
+      <div class="admin-section">
+        <h3>Pedidos por mês</h3>
+        <div class="admin-sub">Volume de pedidos recebidos, últimos meses</div>
+        ${meses.length ? `
+        <div class="bar-chart">
+          ${meses.map(m => {
+            const d = parseDate(m.chave + "-01");
+            const label = d ? d.toLocaleDateString("pt-BR", {month:"short", year:"2-digit"}) : m.chave;
+            const alturaPct = Math.round((m.total / maxMes) * 100);
+            return `<div class="bar-col"><span class="bar-num">${m.total}</span><div class="bar" style="height:${Math.max(alturaPct,4)}%;"></div><span class="bar-label">${label}</span></div>`;
+          }).join("")}
+        </div>` : `<p class="hint">Ainda não há pedidos suficientes para gerar o gráfico.</p>`}
+      </div>
+
+      <div class="admin-section">
+        <h3>Lembretes automáticos por e-mail</h3>
+        <div class="admin-sub">Cadastre um e-mail para receber avisos automáticos: todo dia (pedidos vencendo hoje e atrasados) e toda segunda-feira (resumo semanal). WhatsApp automático não é possível de graça — mas cada alerta abaixo tem um botão para enviar manualmente em 1 clique.</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;max-width:520px;">
+          <div class="field" style="flex:1;min-width:220px;">
+            <label for="configEmailLembrete">E-mail para lembretes</label>
+            <input type="email" id="configEmailLembrete" placeholder="seuemail@exemplo.com" value="${escapeHtml(config.emailLembrete || "")}">
+          </div>
+          <button class="btn btn-secondary" id="btnSalvarConfig" type="button">Salvar</button>
+        </div>
+        <p class="hint" id="configSalvoMsg" style="display:none;margin-top:8px;"></p>
+      </div>
+
+      <div class="admin-section">
+        <h3>Prazos atrasados</h3>
+        <div class="admin-sub">Pedidos que já passaram do prazo estimado e ainda não foram entregues</div>
+        ${atrasados.length ? atrasados.map(p => {
+          const d = prazoDe(p);
+          const diasAtraso = d ? diasEntre(hoje(), d) : 0;
+          const info = `Está ${diasAtraso} dia(s) além do prazo previsto.`;
+          return `<div class="alert-row">
+            <div><div class="nome">${escapeHtml(p.nomeFalecido)}</div><div class="sub">${escapeHtml(p.clienteNome || "—")} · Pedido #${String(p.id).slice(-5)}</div></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="alert-pill atraso">${diasAtraso} dia(s) em atraso</span>
+              <button class="icon-btn icon-btn--whats" data-whats-lembrete="${p.id}" data-dias-info="${escapeHtml(info)}">WhatsApp</button>
+            </div>
+          </div>`;
+        }).join("") : `<p class="hint">Nenhum pedido em atraso no momento.</p>`}
+      </div>
+
+      <div class="admin-section">
+        <h3>Prazos a vencer</h3>
+        <div class="admin-sub">Pedidos com prazo estimado nos próximos 15 dias</div>
+        ${aVencer.length ? aVencer.map(p => {
+          const d = prazoDe(p);
+          const restantes = d ? diasEntre(d, hoje()) : 0;
+          const info = `O prazo previsto vence em ${restantes} dia(s).`;
+          return `<div class="alert-row">
+            <div><div class="nome">${escapeHtml(p.nomeFalecido)}</div><div class="sub">${escapeHtml(p.clienteNome || "—")} · até ${d ? d.toLocaleDateString("pt-BR") : "—"}</div></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="alert-pill avencer">${restantes} dia(s) restante(s)</span>
+              <button class="icon-btn icon-btn--whats" data-whats-lembrete="${p.id}" data-dias-info="${escapeHtml(info)}">WhatsApp</button>
+            </div>
+          </div>`;
+        }).join("") : `<p class="hint">Nenhum pedido com prazo próximo.</p>`}
+      </div>
+
+      <div class="admin-section">
+        <h3>Planilha completa</h3>
+        <div class="admin-sub">Todos os pedidos, todos os campos — use "Exportar planilha (CSV)" para abrir no Excel, ou "Imprimir relatório" para uma versão em papel.</div>
+        <div class="table-wrap">
+          <table class="planilha">
+            <thead><tr>
+              <th>Falecido</th><th>Status</th><th>Data pedido</th><th>Cliente</th><th>Telefone</th>
+              <th>Foto</th><th>Frase</th><th>Cobrado</th><th>Pago</th><th>Pagamento</th>
+            </tr></thead>
+            <tbody>
+              ${pedidos.length ? pedidos.map(p => `
+                <tr>
+                  <td>${escapeHtml(p.nomeFalecido)}</td>
+                  <td>${STATUS_META[statusEfetivo(p)].label}</td>
+                  <td>${fmtDate(p.dataPedido)}</td>
+                  <td>${escapeHtml(p.clienteNome)}</td>
+                  <td>${escapeHtml(p.clienteTelefone || "—")}</td>
+                  <td>${p.comFoto === "sim" ? "Sim" : "Não"}</td>
+                  <td>${p.comFrase === "sim" ? "Sim" : "Não"}</td>
+                  <td>${fmtMoeda(p.valorCobrado)}</td>
+                  <td>${fmtMoeda(p.valorPago)}</td>
+                  <td>${({pendente:"Pendente",parcial:"Parcial",pago:"Pago"})[p.statusPagamento] || "Pendente"}</td>
+                </tr>`).join("") : `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px;">Nenhum pedido cadastrado</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("btnSairAdmin").addEventListener("click", sair);
+    document.getElementById("btnExportarCsv").addEventListener("click", exportarCsv);
+    document.getElementById("btnImprimirRelatorio").addEventListener("click", imprimirRelatorio);
+    document.getElementById("btnSalvarConfig").addEventListener("click", salvarConfigLembrete);
+    el.querySelectorAll("[data-whats-lembrete]").forEach(btn => {
+      btn.addEventListener("click", () => abrirWhatsappLembrete(btn.getAttribute("data-whats-lembrete"), btn.getAttribute("data-dias-info")));
+    });
+  }
+
+  // ---------- init ----------
+  carregarDados(false);
+  iniciarAutoAtualizacao();
+
+})();
 </script>
 </body>
 </html>
